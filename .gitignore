@@ -37,3 +37,18 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+##########################
+### important !!!
+##########################
+# html files ignore in main branch, will update to gh-pages branch to display
+_site/
+
+
+
+
+
+
+
+
+
