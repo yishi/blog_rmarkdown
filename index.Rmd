@@ -1,11 +1,219 @@
 ---
-title: ""
+title: "Bei's blog"
 ---
 
+## 2021
+
+[2021-12-23 dtplyr memo](2021-12-23-dtplyr-memo.html)
+
+[* 2021-12-13 booklist](2021-12-13-booklist.html)
+
+[* 2021-12-06 分分合合](2021-12-06-分分合合.html)
+
+[2021-10-14 dao de jing notes](2021-10-14-dao-de-jing-notes.html)
+
+## 2019
+
+[* 2019-03-07 用blogdown和gitalk搭建个人网站](2019-03-07-用blogdown和gitalk搭建个人网站.html)
+
+## 2018
+
+[2018-09-18 信息爆炸 见多识广 与 孤陋寡闻 在模型变量上的体现](2018-09-18-信息爆炸-见多识广-与-孤陋寡闻-在模型变量上的体现.html)
+
+[2018-04-18 转载 机器学习是什么 周志华](2018-04-18-转载-机器学习是什么-周志华.html)
+
+[* 2018-03-16 小议数据分析](2018-03-16-小议数据分析.html)
+
+## 2017
+
+[2017-12-01 map function replace apply family in base r](2017-12-01-map-function-replace-apply-family-in-base-r.html)
+
+[2017-11-22 good book recommendation r for data science](2017-11-22-good-book-recommendation-r-for-data-science.html)
+
+[2017-09-22 r 包 dplyr 备忘](2017-09-22-r-包-dplyr-备忘.html)
+
+[2017-09-14 data visualization series iv create interactive map in r](2017-09-14-data-visualization-series-iv-create-interactive-map-in-r.html)
+
+[2017-09-08 r包data table备忘](2017-09-08-r包data-table备忘.html)
+
+[* 2017-09-05 kaggle 竞赛有感4](2017-09-05-kaggle-竞赛有感4.html)
+
+[2017-09-04 使用r语言制作具有交互效果的词云](2017-09-04-使用r语言制作具有交互效果的词云.html)
+
+[2017-08-15 kaggle 竞赛有感3小议集成模型](2017-08-15-kaggle-竞赛有感3小议集成模型.html)
+
+[2017-07-31 kaggle 竞赛有感2](2017-07-31-kaggle-竞赛有感2.html)
+
+[2017-07-21 kaggle 竞赛有感之小议模型训练的欠拟合与过拟合](2017-07-21-kaggle-竞赛有感之小议模型训练的欠拟合与过拟合.html)
+
+[2017-07-11 kaggle competition series 1 2](2017-07-11-kaggle-competition-series-1-2.html)
+
+[2017-06-06 r的shiny中的分级菜单](2017-06-06-r的shiny中的分级菜单.html)
+
+[2017-05-10 deep learning series 8 10](2017-05-10-deep-learning-series-8-10.html)
+
+[2017-05-09 deep learning series 7 text document classification using 20 newsgroups dataset](2017-05-08-deep-learning-series-7-text-document-classification-using-20-newsgroups-dataset.html)
+
+[2017-05-08 python tips 2 使用reload sys 后 再使用print语句无输出](2017-05-08-python-tips-2-使用reload-sys-后-再使用print语句无输出.html)
+
+[2017-05-07 python tips 1 unicodeencodeerror ascii codec can 03](2017-05-07-python-tips-1-unicodeencodeerror-ascii-codec-can-03.html)
+
+[2017-02-08 computer vision series 1 2](2017-02-08-computer-vision-series-1-2.html)
+
+[2017-01-07 text mining series 3 automatic summarization](2017-01-07-text-mining-series-3-automatic-summarization.html)
+
+[2017-01-07 text mining series 2 make a spell correct](2017-01-07-text-mining-series-2-make-a-spell-correct.html)
+
+## 2016
+
+[2016-12-27 text mining series 1 sentiment analysis](2016-12-27-text-mining-series-1-sentiment-analysis.html)
+
+[2016-12-15 转载 用glmnet包实施套索算法 lasso](2016-12-15-转载-用glmnet包实施套索算法-lasso.html)
+
+[2016-11-12 deep learning series in python 5 6](2016-11-12-deep-learning-series-in-python-5-6.html)
+
+[2016-11-11 安装和使用深度学习包keras时遇到的卷积层维度和openblas问题](2016-11-11-安装和使用深度学习包keras时遇到的卷积层维度和openblas问题.html)
+
+[2016-09-13 deep learning series in python 1 4](2016-09-13-deep-learning-series-in-python-1-4.html)
+
+[* 2016-08-23 simple data analysis web application by shiny](2016-08-23-simple-data-analysis-web-application-by-shiny.html)
+
+[2016-08-23 data visualization gallery](2016-08-23-data-visualization-gallery.html)
+
+[2016-08-15 r books recommendation](2016-08-15-r-books-recommendation.html)
+
+[* 2016-07-28 word cloud web application by shiny](2016-07-28-word-cloud-web-application-by-shiny.html)
+
+[2016-07-27 data in action series 5 regression models](2016-07-27-data-in-action-series-5-regression-models.html)
+
+[2016-07-27 data in action series 4 text classification](2016-07-27-data-in-action-series-4-text-classification.html)
+
+[2016-07-21 data science series in python](2016-07-21-data-science-series-in-python.html)
+
+[2016-07-20 data in action series 3 image compression](2016-07-20-data-in-action-series-3-image-compression.html)
+
+[2016-07-20 data in action series 2 recognition of human faces](2016-07-20-data-in-action-series-2-recognition-of-human-faces.html)
+
+[2016-07-20 data in action series 1 recognition of handwritten digits](2016-07-20-data-in-action-series-1-recognition-of-handwritten-digits.html)
+
+[2016-06-01 data analysis series vi some analysis using automobile data by r and python](2016-06-01-data-analysis-series-vi-some-analysis-using-automobile-data-by-r-and-python.html)
+
+[2016-05-31 data analysis series v some analysis using world top income data by pandas](2016-05-31-data-analysis-series-v-some-analysis-using-world-top-income-data-by-pandas.html)
+
+[2016-05-23 data analysis series iv the introduction of some simulations](2016-05-23-data-analysis-series-iv-the-introduction-of-some-simulations.html)
+
+[2016-05-17 data analysis series iii the introduction of some distributions](2016-05-17-data-analysis-series-iii-the-introduction-of-some-distributions.html)
+
+[* 2016-05-14 data analysis series ii looking at data two and more variables](2016-05-14-data-analysis-series-ii-looking-at-data-two-and-more-variables.html)
+
+[* 2016-05-10 data analysis series i looking at data a single variable](2016-05-10-data-analysis-series-i-looking-at-data-a-single-variable.html)
+
+[2016-04-30 data visualization series iii do some plot for big data by bokeh in python](2016-04-30-data-visualization-series-iii-do-some-plot-for-big-data-by-bokeh-in-python.html)
+
+[2016-04-02 big data series i the introduction of spark in python](2016-04-02-big-data-series-i-the-introduction-of-spark-in-python.html)
+
+[2016-03-30 windows 上使用ipython note book 打开pyspark](2016-03-30-windows-上使用ipython-note-book-打开pyspark.html)
+
+[2016-03-22 data visualization series ii do some plot by seaborn in python](2016-03-22-data-visualization-series-ii-do-some-plot-by-seaborn-in-python.html)
+
+[2016-03-16 使用r从网页上爬取天气的数据](2016-03-16-使用r从网页上爬取天气的数据.html)
+
+[2016-03-04 数据可视化之 用r画地图 某市的各区构成图](2016-03-04-数据可视化之-用r画地图-某市的各区构成图.html)
+
+[* 2016-03-04 data visualization series i creating a map in r](2016-03-04-data-visualization-series-i-creating-a-map-in-r.html)
+
+[2016-03-03 虚拟机中ubuntu中的python spark notebook](2016-03-03-虚拟机中ubuntu中的python-spark-notebook.html)
+
+[2016-03-02 r中recharts包安装失败的解决方法](2016-03-02-r中recharts包安装失败的解决方法.html)
+
+[2016-02-29 regression model series ii do some nonlinear regression models in r by boston housing data set](2016-02-29-regression-model-series-ii-do-some-nonlinear-regression-models-in-r-by-boston-housing-data-set.html)
+
+[2016-02-26 regression model series i do some linear regression models in r by boston housing data set](2016-02-26-regression-model-series-i-do-some-linear-regression-models-in-r-by-boston-housing-data-set.html)
+
+[2016-02-23 classification model series iii compare classification models use cross validation in r by field goals data set](2016-02-23-classification-model-series-iii-compare-classification-models-use-cross-validation-in-r-by-field-goals-data-set.html)
+
+[2016-02-19 classification model series ii introduction some performance metrics of the classification models in r by field goals data set](2016-02-19-classification-model-series-ii-introduction-some-performance-metrics-of-the-classification-models-in-r-by-field-goals-data-set.html)
+
+[2016-02-19 classification model series i do some classification models in r by iris data set](2016-02-19-classification-model-series-i-do-some-classification-models-in-r-by-iris-data-set.html)
+
+[2016-01-16 cluster for some short texts in r](2016-01-16-cluster-for-some-short-texts-in-r.html)
+
+[2016-01-16 a small tip about r transform the variable](2016-01-16-a-small-tip-about-r-transform-the-variable.html)
+
+[2016-01-16 a small tip about r subset one collumn from a dataframe](2016-01-16-a-small-tip-about-r-subset-one-collumn-from-a-dataframe.html)
+
+[2016-01-16 a small tip about r change the order of factor levels](2016-01-16-a-small-tip-about-r-change-the-order-of-factor-levels.html)
+
+[2016-01-11 3 weight methods for term document matrix in r](2016-01-11-3-weight-methods-for-term-document-matrix-in-r.html)
+
+[2016-01-06 make a word cloud or tag cloud in python and r](2016-01-06-make-a-word-cloud-or-tag-cloud-in-python-and-r.html)
+
+## 2015
+
+[2015-12-05 python画图包seaborn和matplotlib中文字体显示 针对windows系统 使用ipython notebook](2015-12-05-python画图包seaborn和matplotlib中文字体显示-针对windows系统-使用ipython-notebook.html)
+
+[2015-12-04 红绿灯图 在r和python中的实现](2015-12-04-红绿灯图-在r和python中的实现.html)
+
+[2015-11-13 关于批量处理excel文件](2015-11-13-关于批量处理excel文件.html)
+
+[2015-11-10 巧用主成分分析 链接文章中有python代码](2015-11-10-巧用主成分分析-链接文章中有python代码.html)
+
+[2015-10-13 r转python的学习过程](2015-10-13-r转python的学习过程.html)
+
+[2015-10-12 读书笔记](2015-10-11-读书笔记.html)
+
+[2015-10-11 小谈推荐系统](2015-10-11-小谈推荐系统.html)
+
+[2015-07-20 购物篮分析 market basket analysis](2015-07-20-购物篮分析-market-basket-analysis.html)
+
+[2015-05-25 参加的第二个r语言大会](2015-05-25-参加的第二个r语言大会.html)
+
+[2015-05-24 重讀 an introduction to statistical learning 筆記 第四章](2015-05-25-重讀-an-introduction-to-statistical-learning-筆記-第四章.html)
+
+[2015-05-22 sas statistical model summary exercise](2015-05-22-sas-statistical-model-summary-exercise.html)
+
+[2015-03-19 重讀 an introduction to statistical learning 筆記2 第三章](2015-03-19-重讀-an-introduction-to-statistical-learning-筆記2-第三章.html)
+
+[2015-03-18 重讀 an introduction to statistical learning 筆記1 前兩個章節](2015-03-18-重讀-an-introduction-to-statistical-learning-筆記1-前兩個章節.html)
+
+## 2014
+
+[2014-12-25 參加的第一個r語言大會 纪念下](2014-12-25-參加的第一個r語言大會-纪念下.html)
+
+[2014-09-25 分类模型汇总](2014-09-25-分类模型汇总.html)
+
+[2014-06-12 数据挖掘 使用mds可视化探索数据之间的近似性](2014-06-12-数据挖掘-使用mds可视化探索数据之间的近似性.html)
+
+[2014-06-11 数据挖掘 邮件优先级别](2014-06-10-数据挖掘-邮件优先级别.html)
+
+[2014-06-10 数据挖掘 垃圾邮件过滤](2014-06-10-数据挖掘-垃圾邮件过滤.html)
+
+[2014-03-20 感慨r中的向量化計算](2014-03-20-感慨r中的向量化計算.html)
+
+[2014-03-07 用r做作者的社交網絡分析](2014-03-06-用r做作者的社交網絡分析.html)
+
+[2014-03-06 用r做文本分析lda latent dirichletallocation 潜在狄瑞雷克模型](2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型.html)
+
+[2014-02-22 转载 caret包之三](2014-02-22-转载-caret包之三.html)
+
+[2014-02-21 转载 caret包之二](2014-02-21-转载-caret包之二.html)
+
+[2014-02-20 轉載 caret包初探](2014-02-21-轉載-caret包初探.html)
+
+[2014-02-19 转载 随机森林简介](2014-02-21-转载-随机森林简介.html)
+
+
 ## 2013
+
+[2013-11-08 用r做文本分析lsa latent semantic analysis 潜在语义分析模型](2013-11-08-用r做文本分析lsa-latent-semantic-analysis-潜在语义分析模型.html)
+
+[2013-09-24 用r做个简单的词云](2013-09-24-用r做个简单的词云.html)
+
+[2013-09-09 怎样把网页数据读入r](2013-09-09-怎样把网页数据读入r.html)
 
 [2013-08-02 a handbook of statistical analyses using r ex2-1](2013-08-02-a-handbook-of-statistical-analyses-using-r-ex2-1.html)
 
 [2013-06-20 project euler 2](2013-06-20-project-euler-2.html)
 
 [2013-05-14 project euler 1](2013-05-14-project-euler-1.html)
+
