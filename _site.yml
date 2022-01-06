@@ -1,13 +1,18 @@
 name: "my-website"
 navbar:
-  title: "My Website"
+  title: "Bei's Website"
   right:
     - text: "Home"
       href: index.html
+    - text: "GitHub"
+      href: https://github.com/yishi
     - text: "About"
       href: about.html
       
-# output:
-#   html_document:
-#     theme: cosmo
-#     highlight: textmate
+output:
+  html_document:
+    # theme: cosmo
+    # highlight: textmate
+    include:
+      in_header: header.html
+      after_body: footer.html

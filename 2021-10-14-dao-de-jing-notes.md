@@ -29,8 +29,11 @@ tags:
 }</style>
 
 
-
-[本书gitbook版本，请点击这里](https://yishi.github.io/book/)
+<br />
+<br />
+<div align='center' >[本书gitbook版本，请点击这里](https://yishi.github.io/book/)</div>
+<br />
+<br />
 
 
 # 道德真经注卷之一  

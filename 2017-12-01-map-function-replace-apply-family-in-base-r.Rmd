@@ -28,7 +28,7 @@ Then, we want to make linear regression models to 3 data frames at the same time
 ```{r}
 mtcars %>%
   split(.$cyl) %>%
-  map(~lm(mpg ~ wt, data = .))
+  purrr::map(~lm(mpg ~ wt, data = .))
 ```
 
 Wonderful!

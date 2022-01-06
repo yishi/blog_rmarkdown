@@ -15,6 +15,13 @@ tags:
 
 Netlify由于某些原因，已经无法登陆，文章无法更新，目前使用github pages 部署网站。
 
+参考：
+
++ 文件结构参考[R Markdown: The Definitive Guide 10.5](https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html)
+
++ 发布参考[R Markdown Cookbook 7.13.2](https://bookdown.org/yihui/rmarkdown-cookbook/html-share.html)
+
+
 ****
 
 本静态网站主要是使用R包blogdown+hugo+netlify+github搭建的，网站的评论功能使用gitalk。
