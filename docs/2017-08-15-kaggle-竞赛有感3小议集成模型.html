@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2017-08-15" />
+
+<title>kaggle 竞赛有感3小议集成模型</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">kaggle 竞赛有感3小议集成模型</h1>
+<h4 class="author"></h4>
+<h4 class="date">2017-08-15</h4>
+
+</div>
+
+
+<p>集成模型，即ensemble， 把不同的分类器组合在一起进行预测。</p>
+<p>常见的有随机森林、装袋算法、提升算法，基本上是用分类回归树做基学习器，如500棵树组合成随机森林。</p>
+<p>当然，也可以选择其他的算法做为基学习器，如knn，或者提升算法以随机森林作为基学习器，不过运算量太大，用普通笔记本电脑的伤不起啊，跑了两个小时，发现8G内存占满，还把C盘写满，还没运算完。</p>
+<p>通常ensemble之后再ensemble，举个例子，就是把随机森林和提升算法的结果，再求个平均，或者再投票（即求众数，不同于求平均）。</p>
+<p>看了经验帖发现，还有另外一种ensemble之后再ensemble的方法，叫做stack，貌似效果更好。</p>
+<p><strong>先介绍下为什么要ensemble之后再ensemble，即把多种算法预测的结果再组合起来进行预测，准确度会提升？</strong></p>
+<p>参考自：<a href="http://bit.ly/1GQtJDS" class="uri">http://bit.ly/1GQtJDS</a> ，需要翻墙，所以这里再记录下。</p>
+<p>假设：我们已经训练好了3个两类别分类器，正确率均为70%。</p>
+<p>对3个分类器的投票（类别0或1）有四种结果：</p>
+<ul>
+<li>三个分类器全部预测正确</li>
+</ul>
+<p>0.7 * 0.7 * 0.7 = 0.3429</p>
+<ul>
+<li>三个分类器有两个预测正确</li>
+</ul>
+<p>0.7 * 0.7 * 0.3 + 0.7 * 0.3 * 0.7+ 0.3 * 0.7 * 0.7 = 0.4409</p>
+<ul>
+<li>三个分类器中只有一个预测正确，即两个预测错误</li>
+</ul>
+<p>0.3 * 0.3 * 0.7 + 0.3 * 0.7 * 0.3 +0.7 * 0.3 * 0.3 = 0.189</p>
+<ul>
+<li>三个分类器都预测错误</li>
+</ul>
+<p>0.3 * 0.3 * 0.3 = 0.027</p>
+<p>我们能够看到，让三个正确率均为70%的分类器，投票选择类别0或者1，有约78%（0.3429 + 0.4409 = 0.7838）的正确率，正确率提升了8%，主要就在于约44%（0.4409）修正了错误。 这也是装袋算法的原理，构造很多个基分类器，让大家一起投票，选出正确的类别，结果单个分类效果都很差的分类器，最终的预测结果却很好。</p>
+<p><strong>其实，正确率的提升还和投票的分类器是否相关有关。</strong></p>
+<p>举例如下：真实的数列全是1</p>
+<p>1111111100 = 80% accuracy 1111111100 = 80% accuracy 1011111100 = 70% accuracy.</p>
+<p>组合平均后： 1111111100 = 80% accuracy</p>
+<p><u>高度相关的分类器，都是擅长预测数据集的同一个部分，所以，即使再组合平均，提升不大。</u></p>
+<p>现在我们看下高度不相关的分类器：</p>
+<p>1111111100 = 80% accuracy 0111011101 = 70% accuracy 1000101111 = 60% accuracy</p>
+<p>组合平均后： 1111111101 = 90% accuracy</p>
+<p><u>高度不相关的分类器，擅长预测数据集的不同部分，所以，组合平均，提升较大。</u> 这估计也是孟尝君广收各种门客，鸡鸣狗盗之徒，也起到了关键作用的类似道理。 产品多样化的优势。</p>
+<p><strong>有时候，加权投票效果优于简单投票，即体现专家（正确率高的模型）意见的重要性。</strong> |Model| Public Accuracy Score| | —- | —- | | GradientBoostingMachine| 0.65057| |RandomForest Gini| 0.75107| |RandomForest Entropy| 0.75222| |ExtraTrees Entropy| 0.75524| |ExtraTrees Gini (Best) |0.75571| |Voting Ensemble (Democracy)| 0.75337| |Voting Ensemble (3*Best vs. Rest)| 0.75667|</p>
+<p><u>投票和平均的区别:</u></p>
+<p>投票是求众数，平均是求平均数，既然有加权投票，也有加权平均。平均通常可以降低过拟合。</p>
+<p><strong>秩平均（rank average）</strong></p>
+<p>平均的方法真多啊，一般的，加权的，现在又来个秩的，不过仔细一看，绝对实战得来的小技巧啊，指不定是将来的必杀绝技呢。</p>
+<ul>
+<li>假设，你有个这样的预测结果：</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Id</th>
+<th>Prediction</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0.35000056</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0.35000002</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0.35000098</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0.35000111</td>
+</tr>
+</tbody>
+</table>
+<p>看到差异没？重点在最后两位数字。</p>
+<p>另外一个需要平均的预测结果：</p>
+<table>
+<thead>
+<tr class="header">
+<th>Id</th>
+<th>Prediction</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0.57</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0.04</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0.96</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0.99</td>
+</tr>
+</tbody>
+</table>
+<p>由于第一个预测结果的差异太小，需要用放大镜看啊，这两个平均后效果不明显。</p>
+<p>怎么办呢？</p>
+<p>求第一个预测结果中预测值的秩，求第二个预测结果中预测值的秩，然后求这些秩的平均值。</p>
+<table>
+<thead>
+<tr class="header">
+<th>Id</th>
+<th>Rank</th>
+<th>Prediction</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+<td>0.35000056</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0</td>
+<td>0.35000002</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>2</td>
+<td>0.35000098</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>3</td>
+<td>0.35000111</td>
+</tr>
+</tbody>
+</table>
+<p>再把平均后的秩进行标准化到0与1之间，你得到了一个均衡的分布。 |Id|Prediction| | —- | —- | | 1|0.33| |2|0.0| 3|0.66| 4|1.0|</p>
+<ul>
+<li>另外一个例子</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Public</th>
+<th>Private</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Vowpal Wabbit A</td>
+<td>0.60764</td>
+<td>0.59962</td>
+</tr>
+<tr class="even">
+<td>Vowpal Wabbit B</td>
+<td>0.60737</td>
+<td>0.59957</td>
+</tr>
+<tr class="odd">
+<td>Vowpal Wabbit C</td>
+<td>0.60757</td>
+<td>0.59954</td>
+</tr>
+<tr class="even">
+<td>GLMNet</td>
+<td>0.60433</td>
+<td>0.59665</td>
+</tr>
+<tr class="odd">
+<td>Average Bag</td>
+<td>0.60795</td>
+<td>0.60031</td>
+</tr>
+<tr class="even">
+<td>Rank average Bag</td>
+<td>0.61027</td>
+<td>0.60187</td>
+</tr>
+</tbody>
+</table>
+<p>看来秩平均是kaggle中的必备技巧啊。</p>
+<p>和上面的加权平均组合起来，就是加权秩平均，呵呵。</p>
+<p>汇总下</p>
+<table>
+<thead>
+<tr class="header">
+<th>id</th>
+<th>method1_label</th>
+<th>method2_label</th>
+<th>method3_label</th>
+<th>投票</th>
+<th>平均</th>
+<th>秩平均</th>
+<th>几何平均</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>1.67</td>
+<td>0.25</td>
+<td>1.59</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>9</td>
+<td>6</td>
+<td>9</td>
+<td>9</td>
+<td>8</td>
+<td>1</td>
+<td>7.86</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>9</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>4.3</td>
+<td>0.5</td>
+<td>3.3</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>0.75</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>stacked</strong></p>
+<p>参考：</p>
+<ul>
+<li><p><a href="http://blog.csdn.net/wtq1993/article/details/51418958" class="uri">http://blog.csdn.net/wtq1993/article/details/51418958</a></p></li>
+<li><p><a href="https://zhuanlan.zhihu.com/p/26890738" class="uri">https://zhuanlan.zhihu.com/p/26890738</a></p></li>
+</ul>
+<p><img src="images/2017-08-15-kaggle-竞赛有感3小议集成模型-1.jpg" /></p>
+<p>整个过程很像 Cross Validation。</p>
+<p>对于每一轮的 5-fold，Model 1都要<strong>做满5次</strong>的训练和预测。</p>
+<p>首先将训练数据分为5份，接下来一共5个迭代，每次迭代时，将4份数据作为Training Set对每个 Base Model 进行训练，然后在剩下一份 Hold-out Set上进行预测。<strong>同时也要将其在测试数据上的预测保存下来。</strong></p>
+<p>这样，每个 Base Model在每次迭代时会对训练数据的其中1份做出预测，对测试数据的全部做出预测。5个迭代都完成以后我们就获得了一个训练数据行数 x Base Model数量的矩阵，这个矩阵接下来就作为第二层的Model的训练数据。当第二层的Model训练完以后，将之前保存的 Base Model 对测试数据的预测（<strong>因为每个 Base Model被训练了5次，对测试数据的全体做了5次预测，所以对这5次求一个平均值，从而得到一个形状与第二层训练数据相同的矩阵</strong>）拿出来让它进行预测，就得到最后的输出。</p>
+<p><u>Titanic 栗子：</u></p>
+<p>Train Data有890行。(请对应图中的上层部分）</p>
+<p>每1次的fold，都会生成 713行小train， 178行小test。我们用Model 1来训练713行的小train，然后预测178行小test。预测的结果是长度为178的预测值。</p>
+<p>这样的动作走5次！ 长度为178 的预测值X5=890预测值，刚好和Train data长度吻合。这个890预测值是Model 1产生的，我们先存着，因为，一会让它将是第二层模型的训练来源。</p>
+<p><strong>重点</strong>：这一步产生的预测值我们可以转成 890X 1（890行，1列），记作 P1(大写P)</p>
+<p>接着说Test Data有418行。(请对应图中的下层部分，对对对，绿绿的那些框框）</p>
+<p>每1次的fold，713行小train训练出来的Model 1要去预测我们全部的Test Data（全部！因为Test Data没有加入5-fold，所以每次都是全部！）。此时，Model 1的预测结果是长度为418的预测值。</p>
+<p>这样的动作走5次！我们可以得到一个 5 X 418 的预测值矩阵。然后我们根据行来就平均值，最后得到一个 1 X 418 的平均预测值。</p>
+<p><strong>重点</strong>：这一步产生的预测值我们可以转成 418 X 1 （418行，1列），记作 p1 (小写p)</p>
+<p>走到这里，你的第一层的Model 1完成了它的使命。</p>
+<p>第一层还会有其他Model的，比如Model 2，同样的走一遍， 我们有可以得到 890 X 1 (P2) 和 418 X 1 (p2) 列预测值。</p>
+<p>这样吧，假设你第一层有3个模型，这样你就会得到：</p>
+<p>来自5-fold的预测值矩阵 890 X 3，（P1，P2， P3） 和 来自Test Data预测值矩阵 418 X 3， （p1, p2, p3）。</p>
+<hr />
+<p>到第二层了………………</p>
+<p>来自5-fold的预测值矩阵 890 X 3 作为你的Train Data，训练第二层的模型</p>
+<p>来自Test Data预测值矩阵 418 X 3 就是你的Test Data，用训练好的模型来预测他们吧。</p>
+<p><img src="images/2017-08-15-kaggle-竞赛有感3小议集成模型-2.jpg" /></p>
+<p><strong>stack算法实施</strong></p>
+<p>在R中可以直接调用<code>caretEnsemble</code>包中的<code>caretStack</code>函数</p>
+<p>python中貌似可以自己写</p>
+<p><img src="images/2017-08-15-kaggle-竞赛有感3小议集成模型-3.jpg" /></p>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数270，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

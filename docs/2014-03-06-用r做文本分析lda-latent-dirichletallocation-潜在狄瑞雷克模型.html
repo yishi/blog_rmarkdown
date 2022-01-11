@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2014-03-06" />
+
+<title>用R做文本分析LDA（Latent DirichletAllocation）潜在狄瑞雷克模型</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">用R做文本分析LDA（Latent DirichletAllocation）潜在狄瑞雷克模型</h1>
+<h4 class="author"></h4>
+<h4 class="date">2014-03-06</h4>
+
+</div>
+
+
+<p>上次的文本分析用的LSA，奇異值分解的方法把語義進行分類，這次看下LDA是怎麼分類的？</p>
+<pre class="{r}"><code>######################################
+### LDA mddel in the text mining
+#######################################
+library(lda)
+library(tm)
+library(reshape2)
+library(ggplot2)
+library(RColorBrewer)
+
+# raw text
+txt &lt;- c(&quot;The Neatest Little Guide to Stock Market Investing &quot;, 
+        &quot;Investing For Dummies, 4th Edition &quot;, 
+        &quot;The Little Book of Common Sense Investing: The Only Way to Guarantee Your Fair Share of Stock Market Returns&quot;, 
+        &quot;The Little Book of Value Investing &quot;, 
+        &quot;Value Investing: From Graham to Buffett and Beyond &quot;, 
+        &quot;Rich Dad&#39;s Guide to Investing: What the Rich Invest in, That the Poor and the Middle Class Do Not! &quot;, 
+        &quot;Investing in Real Estate, 5th Edition &quot;, 
+        &quot;Stock Investing For Dummies &quot;, 
+        &quot;Rich Dad&#39;s Advisors: The ABC&#39;s of Real Estate Investing: The Secrets of Finding Hidden Profits Most Investors Miss&quot;)
+
+# using tm package to clean raw text
+s &lt;- Corpus(VectorSource(txt))
+s &lt;- tm_map(s, tolower)
+s &lt;- tm_map(s, removePunctuation)
+s &lt;- tm_map(s, removeWords, stopwords(&quot;english&quot;))
+s &lt;- tm_map(s, stripWhitespace)
+
+# generate LDA documents from cleaned raw text
+clean_corpus &lt;- lexicalize(s, lower = TRUE)
+
+# functions to fit LDA-type models
+clean_lda_fit &lt;- lda.collapsed.gibbs.sampler(clean_corpus$documents, K = 5, clean_corpus$vocab, 
+                                      num.iterations = 100, alpha = 0.1, eta = 0.1, compute.log.likelihood = TRUE)
+
+# plot the returned log-likelihood values to verify convergence
+# by ploting the log-likelihood values, one can determine whether modifying
+# the number of iteration can significantly impact the log-likelihood of the
+# model, hence improve the final model.
+# plot(1:100, clean_lda_fit$log.likelihoods[1, ])
+# plot(1:100, clean_lda_fit$log.likelihoods[2, ])
+
+# topic representation
+# row represent words, col represent topic
+top.topic.words(topics = clean_lda_fit$topics, num.words = 6, by.score = TRUE)</code></pre>
+<p><img src="images/2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型-1.jpg" /></p>
+<pre class="{r}"><code># plot the topic associations
+d &lt;- melt(clean_lda_fit$document_sums)
+colnames(d) &lt;- c(&quot;topic&quot;, &quot;document&quot;, &quot;value&quot;)
+d$topic &lt;- as.factor(d$topic)
+d$document &lt;- as.factor(d$document)
+
+ggplot(d, aes(x = document)) + 
+  geom_bar(aes(weight = value, fill = topic), position = &#39;fill&#39;) + 
+  scale_fill_manual(values = rev(brewer.pal(10, &quot;Spectral&quot;)))</code></pre>
+<p><img src="images/2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型-2.jpg" /></p>
+<pre class="{r}"><code># computing similarities between documents
+mat &lt;- t(as.matrix(clean_lda_fit$document_sums)) %*% as.matrix(clean_lda_fit$document_sums)
+dia &lt;- diag(mat)
+sim &lt;- t(t(mat / sqrt(dia)) / sqrt(dia))
+sim[1:5, 1:5]</code></pre>
+<p><img src="images/2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型-3.jpg" /></p>
+<pre class="{r}"><code># using a heatmap to illustrate clusters of documents
+heatmap(sim)</code></pre>
+<p><img src="images/2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型-4.jpg" /></p>
+<p>黃色的部份代表強相似性，紅色部份代表文檔之間距離很遠，從上圖可以看出，文檔2、7、8、9是一個類別，文檔1、 3、 4是一個類別，5和6分別屬於兩個不同的類別。 對比上面的個文檔中個主題所占百分比的堆疊條形圖，文檔1、3、4中主題5的比例占比高，文檔2、7、8、9中主題3占比較高，文檔5屬於主題2，文檔6屬於主題1.</p>
+<p><strong>參考書籍</strong></p>
+<ul>
+<li>《Data Mining Applications with R》</li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数630，评论1个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -257,7 +257,7 @@ leaflet(df[df$year == 2022, ]) %>%
 ```{r make_animation, echo=FALSE, eval=TRUE, animation.hook='gifski', fig.height=20, fig.width=20}
 
 for (i in 1:18) {
-  png_dir <- './_site/2021-12-06-分分合合---shade_files/figure-html/'
+  png_dir <- './docs/2021-12-06-分分合合---shade_files/figure-html/'
   png_file <- list.files(path = png_dir, pattern = '.png')
   
   if(length(png_file) != 0) {

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2014-03-20" />
+
+<title>感慨R中的向量化計算</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">感慨R中的向量化計算</h1>
+<h4 class="author"></h4>
+<h4 class="date">2014-03-20</h4>
+
+</div>
+
+
+<p>今天看到一篇博文，統計之都推薦的，網址見下：<a href="http://alyssafrazee.com/vectorization.html" class="uri">http://alyssafrazee.com/vectorization.html</a> ,看了真是驚出一身冷汗，我用的特別順手的<code>apply</code>及他的兄弟姐妹（<code>lapply</code> <code>sapply</code>)等居然都是隱形循環,<strong>根本不是向量化</strong>,是簡潔版的循環loop,以後要用<code>ddply</code>之類的代替了。</p>
+<p>好吧，矩陣向量化計算,請使用下面的吧。 <code>rowSums</code>, <code>colSums</code>, <code>rowMeans</code>, <code>colMeans</code> (in base), <code>rowSds</code>, <code>colSds</code>, <code>rowVars</code>, <code>colVars</code>, <code>rowttests</code>, <code>rowFtests</code> (in genefilter), <code>colMedians</code>, <code>rowMedians</code> (in matrixStats).</p>
+<p>告別<code>apply(matrix,2,sum)</code>之類的語句吧，隨著數據量的增加，運行時間指數增長啊，是真循環啊。</p>
+<p>貌似<code>apply</code>是真循環，是一本庫存已久的書R-inferno（原名為R地獄，也有人翻譯為R神曲，呵呵）裏面介紹的，我卻一直沒看，傷心，要抽時間看下這本書啊。</p>
+<p>博主原文附後：</p>
+<p><strong>let’s talk about vectorization</strong> <a href="http://alyssafrazee.com/vectorization.html" class="uri">http://alyssafrazee.com/vectorization.html</a> Sun 09 February 2014 | – (permalink)</p>
+<ul>
+<li>what’s vectorization?</li>
+</ul>
+<p>In R, a “vector” refers to a one-dimensional array. A “vectorized” function f() takes a vector [x1, x2, … , xn] as input and returns the vector [f(x1), f(x2), f(x3), … , f(xn)]. If you’d like to read more about this, you should read Chapter 3 of the R Inferno, where the third circle of R hell is “failing to vectorize.”1</p>
+<ul>
+<li>why is vectorization important?</li>
+</ul>
+<p>R takes a fair amount of heat from the hacker community because it’s kind of slow at looping2. It compensates (somewhat) for this weakness by using vectorized functions! Vectorized functions usually involve a behind-the-scenes loop in a low-level language (C or Fortran), which runs way faster than a pure R loop. Here’s an example using the log() function that illustrates the speedup you can get by exploiting the fact that log() is vectorized:</p>
+<pre class="{r}"><code># illustrating log&#39;s behavior: single values and vectors
+log(3)
+# [1] 1.098612
+log(1:10)
+# [1] 0.0000000 0.6931472 1.0986123 1.3862944 1.6094379 1.7917595 1.9459101 
+#[8] 2.0794415 2.1972246 2.3025851
+# a vector of 1 million random numbers between 1 and 10
+nums = sample(1:10, size=1000000, replace=TRUE)
+# my function to call log on each vector element separately:
+log_novec = function(n){
+  ret = rep(NA, length(n))
+  for(i in seq_along(n)){
+    ret[i] = log(n[i])
+    }
+  return(ret)
+  }
+# timing results:
+system.time(log_novec(nums))
+# user system elapsed 
+# 1.938 0.004 1.941 
+&gt; system.time(log(nums)) 
+# user system elapsed 
+# 0.017 0.002 0.019 
+#  100x speedup!</code></pre>
+<p>So in conclusion:</p>
+<p><strong>vectorization is important because it allows you to operate on vectors quickly (unlike looping)</strong>.</p>
+<ul>
+<li>side note: a small clarification</li>
+</ul>
+<p>If you are acting as an R user, you don’t need to worry about WRITING vectorized functions. But if you’d like to write R code that will run in a reasonable amount of time on large dataset (memory issues aside), it’s good to think about USING vectorized functions, which consequently means learning where and when to look for them. If, on the other hand, you are acting as an R developer, you might have to implement your own vectorized function, which will probably involve writing some C or Fortan.</p>
+<ul>
+<li>how about those “apply” functions?</li>
+</ul>
+<p>The apply family of functions provides some fairly clean syntax for apply-ing a function (any function) to each element of some data structure. The point I want to emphasize is this: <strong>apply functions are basically equivalent to loops in terms of speed</strong>. As the R Inferno puts it: apply “is not vectorization, it is loop-hiding.” So using apply instead of loops might make for nicer/shorter code, but it won’t make for faster code.</p>
+<pre class="{r}"><code>system.time(sapply(nums, log)) 
+# user system elapsed 
+# 1.847 0.025 1.871 
+system.time(vapply(nums, log, 0)
+# user system elapsed 
+# 0.781 0.001 0.781</code></pre>
+<p>(I did get a 2x speedup by using vapply and telling it that I knew the result would be numeric, but that’s nothing compared to my 100x speedup from using vectorized log.)</p>
+<p>If you are working with data frames and find yourself using lots of apply statements, check out plyr, which provides some really nice syntax, and dplyr, a superfast “next iteration” of plyr.</p>
+<ul>
+<li>lesson 1: think twice about every loop or apply statement you write</li>
+</ul>
+<p>This is what I’ve been doing recently: every time I write a loop or apply statement3, I think about whether I can do better. Am I calling a vectorized function inside that loop? Most functions that take a number or a string as input are vectorized. Can I somehow incorporate this into my loop code?</p>
+<ul>
+<li>lesson 2: matrices sometimes behave like vectors</li>
+</ul>
+<p>I’ve learned this lesson pretty recently. There are two ways in which matrices sometimes act like vectors:</p>
+<ul>
+<li>way 1: rows (or columns) are the vector entries</li>
+</ul>
+<p>Conceptualizing a matrix as a one-dimensional array of rows (or columns) lets us add a bunch of vectorized matrix functions to our quiver! The following vectorized matrix functions exist and are super fast and awesome: rowSums, colSums, rowMeans, colMeans (in base), rowSds, colSds, rowVars, colVars, rowttests, rowFtests (in genefilter), colMedians, rowMedians (in matrixStats). Because I think any serious R programmer should know about and use these functions whenever possible, I was surprised to see this around the Twitterverse the other day:</p>
+<p>because, on a 10,000 x 10,000 matrix:</p>
+<pre class="{r}"><code>mat = matrix(sample(1:10, size=100000000, replace=TRUE), nrow=10000)
+system.time(apply(mat, 1, sum)) 
+# user system elapsed 
+# 2.191 0.343 2.534 
+system.time(rowSums(mat)) 
+# user system elapsed 
+# 0.388 0.001 0.388</code></pre>
+<ul>
+<li>way 2: matrices get converted to vectors when you call vector functions on them</li>
+</ul>
+<p>Here’s a line of code that was bottlenecking one of my functions a few weeks ago:</p>
+<pre class="{r}"><code>counts = lapply(1:nrow(normedcounts), function(i){ 
+ (lengths[i]/1000) * normedcounts[i,]})
+counts = matrix(unlist(counts, use.names=FALSE), nrow=length(counts), byrow=TRUE)</code></pre>
+<p>I had a matrix, normedcounts, where each row had been normalized by a constant. I had stored that constant (times 1000) in the vector lengths. I wanted to generate the matrix of raw (un-normalized) counts. Upon seeing this code, my advisor said “wait…are you just multiplying each row of this matrix by a number? You can just use:</p>
+<p><span class="math display">\[counts = lengths/1000 * normedcounts\]</span></p>
+<p>This line of code is actually a little bit tricky. There are several concepts/R quirks floating around in here - I’ll illustrate them with toy examples:</p>
+<ul>
+<li>matrices get turned into vectors by column:</li>
+</ul>
+<pre class="{r}"><code>mat = matrix(1:4, byrow=TRUE, nrow=2)
+mat 
+#[,1] [,2][1,] 1 2[2,] 3 4
+as.vector(mat)
+#[1] 1 3 2 4</code></pre>
+<ul>
+<li>RECYCLING (a blessing and a curse):</li>
+</ul>
+<p>Here’s an illustration of recycling, just with vectors:</p>
+<pre class="{r}"><code>v1 = c(2,3)
+v2 = 1:10
+v1*v2 
+# [1] 2 6 6 12 10 18 14 24 18 30
+v3 = c(2,3,4)
+v3*v2 
+# [1] 2 6 12 8 15 24 14 24 36 20
+# Warning message:In v3 * v2 : longer object length is not a multiple of shorter object length</code></pre>
+<p>Note that recycling happens silently unless the length of the longer vector isn’t a multiple of a length of the shorter vector. This is sometimes desirable (it makes it such that constant * vector multiplication behaves as expected, without warning), but it can make debugging hellish</p>
+<ul>
+<li>if the longer “vector” was actually a matrix, a matrix gets returned:</li>
+</ul>
+<pre class="{r}"><code>mat [,1] [,2]
+#[1,] 1 2
+#[2,] 3 4
+c(100, 50, 3)*mat 
+# [,1] [,2]
+#[1,] 100 6
+#[2,] 150 400
+# Warning message:In c(100, 50, 3) * mat : longer object length is not a multiple of shorter object length</code></pre>
+<p>Now…once you know these quirks, you can exploit them to use vectorization instead of looping (as my advisor suggested)! The three bullet points above imply that a length-k vector times a k-row matrix returns another matrix, where each row of that matrix is multiplied by the corresponding number in the vector. (That’s exactly what I wanted).</p>
+<p>Here are the timings for my example scenario:</p>
+<pre class="{r}"><code>normedcounts = matrix(runif(1000000*100, min=0, max=5), nrow=1000000)
+lengths = sample(1:100, size=1000000, replace=TRUE)
+system.time(lapply(1:nrow(normedcounts), function(i){
+(lengths[i]/1000) * normedcounts[i,]
+})) 
+# user system elapsed 
+# 7.213 0.323 7.535 
+system.time(lengths/1000 * normedcounts) 
+# user system elapsed 
+# 0.342 0.225 0.567</code></pre>
+<p>If you want to practice the principles of lesson 2, take the super fun puzzle challenge for readers: using no loops or apply statements, given a matrix M, find the number of outliers in each row of M. An outlier for row k is defined as an entry that is more than 3 standard deviations above the mean of row k.</p>
+<ul>
+<li>lesson 3: methods for S3/S4 class “foo” are often vectorized for class “fooList”</li>
+</ul>
+<p>I’ve been doing a lot of work with the GenomicRanges library lately. An object of class GRanges looks like this:</p>
+<pre class="{r}"><code>x 
+#x is of class GRangesGRanges with 5 ranges and 2 metadata columns: 
+# seqnames ranges strand | id transcripts | [1] 22 [16187163, 16187278] - | 15 13 [2] 22 [16189032, 16189143] - | 16 13 [3] 22 
+# #[16189264, 16189411] - | 17 13 [4] 22 [16190681, 16190791] - | 18 13 [5] 22 [16192906, 16193047] - | 19 13 --- seqlengths: 1 11 12 13 # # 14 18 19 2 22 # 4 6 7 8 X NA NA NA NA NA NA NA NA NA NA NA NA NA NA</code></pre>
+<p>This is basically a set of intervals (“ranges”), where each range has some associated metadata.</p>
+<p>You can extract the width of each interval with the width() function:</p>
+<pre class="{r}"><code>width(x)
+# [1] 116 112 148 111 142</code></pre>
+<p>I had written a piece of code to operate on a list of 1296 GRanges objects. This type of list is conveniently classed as a GRangesList. Because width is a GRanges function, my immediate thought was that I would need to write an lapply statement to get a list of range widths for each of the GRanges objects in my GRangesList:</p>
+<pre class="{r}"><code># grl is my GRangesList
+system.time(lapply(grl, width))
+# user system elapsed 
+# 9.481 0.010 9.490</code></pre>
+<p>This is pretty slow for a list of length 1296, so I did a bit of documentation-reading and found out that the width() method is vectorized: you can call it on a GRangesList…</p>
+<pre class="{r}"><code>system.time(width(grl)) 
+# user system elapsed
+# 0.001 0.000 0.001</code></pre>
+<p>…WITH AMAZING RESULTS. 9000X SPEEDUP, BABY.</p>
+<ul>
+<li>lesson 4: sometimes you really do need a loop</li>
+</ul>
+<p>Alas, vectorized functions can’t solve all of our problems. For example, loops with dependent iterations, like Gibbs samplers and Hidden Markov Models, will probably need to stay loops. All is not lost, however: if you (or your friends!) know a lower-level language, you (all) can write the functions yourself, perhaps using a tool like Rcpp to interface with R.</p>
+<ul>
+<li><p>footnotes</p>
+<ul>
+<li><p>The R Inferno is hilarious and informative reading for anyone who loves and/or hates R.</p></li>
+<li><p>R takes heat from the hacker community for a number of other reasons as well. We can (maybe) talk about this another day, but what I’ll say now is this: I don’t like when people that have never used R go on and on about how terrible it is. The way I feel about R is how I imagine I’d feel about my dorky little brother (if I had one): he’s quirky and weird and not the best athlete ever, but you don’t get to make fun of him because he’s my brother, not yours. Incidentally, this is also the way I feel when people hate on Baltimore.</p></li>
+<li><p>I find myself writing loops and apply statements embarrassingly often. I suspect this happens for two reasons: 1. I find loops more intuitive/expressive: they more closely match how I conceptualize the code in my head, and 2. the programming language I learned first, and the only one I ever learned in a formal classroom setting, is C++.</p></li>
+</ul></li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数101，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

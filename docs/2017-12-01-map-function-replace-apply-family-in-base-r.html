@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2017-12-01" />
+
+<title>Map Function Replace Apply Family in Base R</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Map Function Replace Apply Family in Base R</h1>
+<h4 class="author"></h4>
+<h4 class="date">2017-12-01</h4>
+
+</div>
+
+
+<p>Map function in <strong>tidyverse</strong> package is awesome.</p>
+<p>Let us look at one example.</p>
+<ul>
+<li>First of all, we split the dateset “mtcars”” into 3 data frames by variable “cyl”.</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+
+mtcars %&gt;%
+  split(.$cyl) %&gt;%
+  str()</code></pre>
+<pre><code>## List of 3
+##  $ 4:&#39;data.frame&#39;:   11 obs. of  11 variables:
+##   ..$ mpg : num [1:11] 22.8 24.4 22.8 32.4 30.4 33.9 21.5 27.3 26 30.4 ...
+##   ..$ cyl : num [1:11] 4 4 4 4 4 4 4 4 4 4 ...
+##   ..$ disp: num [1:11] 108 146.7 140.8 78.7 75.7 ...
+##   ..$ hp  : num [1:11] 93 62 95 66 52 65 97 66 91 113 ...
+##   ..$ drat: num [1:11] 3.85 3.69 3.92 4.08 4.93 4.22 3.7 4.08 4.43 3.77 ...
+##   ..$ wt  : num [1:11] 2.32 3.19 3.15 2.2 1.61 ...
+##   ..$ qsec: num [1:11] 18.6 20 22.9 19.5 18.5 ...
+##   ..$ vs  : num [1:11] 1 1 1 1 1 1 1 1 0 1 ...
+##   ..$ am  : num [1:11] 1 0 0 1 1 1 0 1 1 1 ...
+##   ..$ gear: num [1:11] 4 4 4 4 4 4 3 4 5 5 ...
+##   ..$ carb: num [1:11] 1 2 2 1 2 1 1 1 2 2 ...
+##  $ 6:&#39;data.frame&#39;:   7 obs. of  11 variables:
+##   ..$ mpg : num [1:7] 21 21 21.4 18.1 19.2 17.8 19.7
+##   ..$ cyl : num [1:7] 6 6 6 6 6 6 6
+##   ..$ disp: num [1:7] 160 160 258 225 168 ...
+##   ..$ hp  : num [1:7] 110 110 110 105 123 123 175
+##   ..$ drat: num [1:7] 3.9 3.9 3.08 2.76 3.92 3.92 3.62
+##   ..$ wt  : num [1:7] 2.62 2.88 3.21 3.46 3.44 ...
+##   ..$ qsec: num [1:7] 16.5 17 19.4 20.2 18.3 ...
+##   ..$ vs  : num [1:7] 0 0 1 1 1 1 0
+##   ..$ am  : num [1:7] 1 1 0 0 0 0 1
+##   ..$ gear: num [1:7] 4 4 3 3 4 4 5
+##   ..$ carb: num [1:7] 4 4 1 1 4 4 6
+##  $ 8:&#39;data.frame&#39;:   14 obs. of  11 variables:
+##   ..$ mpg : num [1:14] 18.7 14.3 16.4 17.3 15.2 10.4 10.4 14.7 15.5 15.2 ...
+##   ..$ cyl : num [1:14] 8 8 8 8 8 8 8 8 8 8 ...
+##   ..$ disp: num [1:14] 360 360 276 276 276 ...
+##   ..$ hp  : num [1:14] 175 245 180 180 180 205 215 230 150 150 ...
+##   ..$ drat: num [1:14] 3.15 3.21 3.07 3.07 3.07 2.93 3 3.23 2.76 3.15 ...
+##   ..$ wt  : num [1:14] 3.44 3.57 4.07 3.73 3.78 ...
+##   ..$ qsec: num [1:14] 17 15.8 17.4 17.6 18 ...
+##   ..$ vs  : num [1:14] 0 0 0 0 0 0 0 0 0 0 ...
+##   ..$ am  : num [1:14] 0 0 0 0 0 0 0 0 0 0 ...
+##   ..$ gear: num [1:14] 3 3 3 3 3 3 3 3 3 3 ...
+##   ..$ carb: num [1:14] 2 4 3 3 3 4 4 4 2 2 ...</code></pre>
+<p>Then, we want to make linear regression models to 3 data frames at the same time.</p>
+<pre class="r"><code>mtcars %&gt;%
+  split(.$cyl) %&gt;%
+  purrr::map(~lm(mpg ~ wt, data = .))</code></pre>
+<pre><code>## $`4`
+## 
+## Call:
+## lm(formula = mpg ~ wt, data = .)
+## 
+## Coefficients:
+## (Intercept)           wt  
+##      39.571       -5.647  
+## 
+## 
+## $`6`
+## 
+## Call:
+## lm(formula = mpg ~ wt, data = .)
+## 
+## Coefficients:
+## (Intercept)           wt  
+##       28.41        -2.78  
+## 
+## 
+## $`8`
+## 
+## Call:
+## lm(formula = mpg ~ wt, data = .)
+## 
+## Coefficients:
+## (Intercept)           wt  
+##      23.868       -2.192</code></pre>
+<p>Wonderful!</p>
+<p>If you want the details of map function, please click this <a href="http://r4ds.had.co.nz/iteration.html#the-map-functions">link</a>.</p>
+<p>You could look at a better display version in <a href="http://rpubs.com/kong_026/map_function">here</a>, you can also make your rmarkdown documents and share them.</p>
+<p>Welcome your advice and suggestion!</p>
+<p>Just record, this article was posted at linkedin, and have 17 views to November 2021.</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

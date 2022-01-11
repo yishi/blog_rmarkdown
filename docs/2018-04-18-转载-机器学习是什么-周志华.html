@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2018-04-18" />
+
+<title>[转载]机器学习是什么——周志华</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">[转载]机器学习是什么——周志华</h1>
+<h4 class="author"></h4>
+<h4 class="date">2018-04-18</h4>
+
+</div>
+
+
+<p>机器学习现在是一大热门，研究的人特多，越来越多的新人涌进来。</p>
+<p>不少人其实并没有真正想过，这是不是自己喜欢搞的东西，只不过看见别人都在搞，觉着跟大伙儿走总不会吃亏吧。</p>
+<p>问题是，真有个“大伙儿”吗？就不会是“两伙儿”、“三伙儿”？如果有“几伙儿”，那到底该跟着“哪伙儿”走呢？</p>
+<p>很多人可能没有意识到，所谓的machine learning community，现在至少包含了两个有着完全不同的文化、完全不同的价值观的群体，称为machine learning “communities”也许更合适一些。</p>
+<hr />
+<p>第一个community，是把机器学习看作人工智能分支的一个群体，这群人的主体是计算机科学家。</p>
+<p>现在的“机器学习研究者”可能很少有人读过1983年出的“Machine Learning: An Artificial Intelligence Approach”这本书。这本书的出版标志着机器学习成为人工智能中一个独立的领域。它其实是一部集早期机器学习研究之大成的文集，收罗了若干先贤（例 如Herbert Simon，那位把诺贝尔奖、图灵奖以及各种各样和他相关的奖几乎拿遍了的科学天才）的大作，主编是Ryszard S. Michalski（此君已去世多年了，他可算是机器学习的奠基人之一）、Jaime G. Carbonell（此君曾是Springer的LNAI的总编）、Tom Mitchell（此君是CMU机器学习系首任系主任、著名教材的作者，机器学习界没人不知道他吧）。Machine Learning杂志的创刊，正是这群人努力的结果。这本书值得一读。虽然技术手段早就日新月异了，但有一些深刻的思想现在并没有过时。各个学科领域总有 不少东西，换了新装之后又粉墨登场，现在热火朝天的transfer learning，其实就是learning by analogy的升级版。</p>
+<p>人工智能的研究从以“推理”为重点到以“知识”为重点，再到以“学习”为重点，是有一条自然、清晰的脉络。人工智能出身的机器学习研究者，绝大部分 是把机器学习作为实现人工智能的一个途径，正如1983年的书名那样。他们关注的是人工智能中的问题，希望以机器学习为手段，但具体采用什么样的学习手段，是基于统计的、代数的、还是逻辑的、几何的，他们并不care。</p>
+<p>这群人可能对统计学习目前dominating的地位未必满意。靠统计学习是不可能解决人工智能中大部分问题的，如果统计学习压制了对其他手段的研究，可能不是好事。这群人往往也不care在文章里show自己的数学水平，甚至可能是以简化表达自己的思想为荣。人工智能问题不是数学问题，甚至未必是依靠数学能够解决的问题。人工智能中许多事情的难处，往往在于我们不知道困难的本质在哪里，不知道“问题”在哪里。一旦“问题”清楚了，解决起来可能并不困难。</p>
+<p>第二个community，是把机器学习看作“应用统计学”的一个群体，这群人的主体是统计学家。</p>
+<p>和纯数学相比，统计学不太“干净”，不少数学家甚至拒绝承认统计学是数学。但如果和人工智能相比，统计学就太干净了，统计学研究的问题是清楚的，不象人工智能那样，连问题到底在哪里都不知道。在相当长时间里，统计学家和机器学习一直保持着距离。</p>
+<p>慢慢地，不少统计学家逐渐意识到，统计学本来就该面向应用，而机器学习天生就是一个很好的切入点。因为机器学习虽然用到各种各样的数学，但要分析大 量数据中蕴涵的规律，统计学是必不可少的。统计学出身的机器学习研究者，绝大部分是把机器学习当作应用统计学。他们关注的是如何把统计学中的理论和方法变 成可以在计算机上有效实现的算法，至于这样的算法对人工智能中的什么问题有用，他们并不care。</p>
+<p>这群人可能对人工智能毫无兴趣，在他们眼中，机器学习就是统计学习，是统计学比较偏向应用的一个分支，充其量是统计学与计算机科学的交叉。这群人对统计学习之外的学习手段往往是排斥的，这很自然，基于代数的、逻辑的、几何的学习，很难纳入统计学的范畴。</p>
+<p>两个群体的文化和价值观完全不同。第一个群体认为好的工作，第二个群体可能觉得没有技术含量，但第一个群体可能恰恰认为，简单的才好，正因为很好地抓住了问题本质，所以问题变得容易解决。第二个群体欣赏的工作，第一个群体可能觉得是故弄玄虚，看不出他想解决什么人工智能问题，根本就不是在搞人工智能、搞计算机，但别人本来也没说自己是在“搞人工智能”、“搞计算机”，本来就不是在为人工智能做研究。</p>
+<p>两个群体各有其存在的意义，应该宽容一点，不需要去互较什么短长。但是既然顶着Machine Learning这个帽子的不是“一伙儿”，而是“两伙儿”，那么要“跟进”的新人就要谨慎了，先搞清楚自己更喜欢“哪伙儿”。</p>
+<p>引两位著名学者的话结尾，一位是人工智能大奖得主、一位是统计学习大家，名字我不说了，省得惹麻烦：</p>
+<blockquote>
+<p>“I do not come to AI to do statistics”</p>
+</blockquote>
+<blockquote>
+<p>“I do not have interest in AI”</p>
+</blockquote>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数42，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

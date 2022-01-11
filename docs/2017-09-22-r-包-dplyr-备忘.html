@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2017-09-22" />
+
+<title>R 包 dplyr 备忘</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">R 包 dplyr 备忘</h1>
+<h4 class="author"></h4>
+<h4 class="date">2017-09-22</h4>
+
+</div>
+
+
+<ul>
+<li>选取某些行 filter()</li>
+<li>排序 arrange()</li>
+<li>选某些列 select()</li>
+<li>根据其他列新增某列变量 mutate()</li>
+<li>汇总 summarise()</li>
+<li>上面的都可以和 group_by() 分组配合使用</li>
+</ul>
+<pre class="{r}"><code>filter(flights, month == 1, day == 1)
+
+filter(flights, month == 11 | month == 12)
+
+arrange(flights, year, month, day)
+
+arrange(flights, desc(arr_delay))
+
+select(flights, year, month, day)
+
+select(flights, -(year:day))
+starts_with(&quot;abc&quot;)
+ends_with(&quot;xyz&quot;)
+contains(&quot;ijk&quot;)
+matches(&quot;(.)\\1&quot;)
+num_range(&quot;x&quot;, 1:3)
+
+rename(flights, tail_num = tailnum)
+
+# This is useful if you have a handful of variables you’d like to move to the start of the data frame.
+
+select(flights, time_hour, air_time, everything())
+
+flights_sml &lt;- select(flights, 
+  year:day, 
+  ends_with(&quot;delay&quot;), 
+  distance, 
+  air_time
+)
+
+mutate(flights_sml,
+  gain = arr_delay - dep_delay,
+  speed = distance / air_time * 60
+)
+
+# If you only want to keep the new variables, use transmute()
+transmute(flights,
+  dep_time,
+  hour = dep_time %/% 100,
+  minute = dep_time %% 100
+)</code></pre>
+<ul>
+<li>Logs: log(), log2(), log10().</li>
+</ul>
+<p>Logarithms are an incredibly useful transformation for dealing with data that ranges across multiple orders of magnitude. They also convert multiplicative relationships to additive, a feature we’ll come back to in modelling.</p>
+<p>All else being equal, I recommend using log2() because it’s easy to interpret: a difference of 1 on the log scale corresponds to doubling on the original scale and a difference of -1 corresponds to halving.</p>
+<pre class="{r}"><code>(x &lt;- 1:10)
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
+
+lag(x)
+#&gt;  [1] NA  1  2  3  4  5  6  7  8  9
+
+lead(x)
+#&gt;  [1]  2  3  4  5  6  7  8  9 10 NA</code></pre>
+<ul>
+<li>Arithmetic operators: +, -, *, /, ^.</li>
+</ul>
+<p>These are all vectorised, using the so called “recycling rules”. If one parameter is shorter than the other, it will be automatically extended to be the same length. This is most useful when one of the arguments is a single number: air_time / 60, hours * 60 + minute, etc.</p>
+<ul>
+<li>Cumulative and rolling aggregates:</li>
+</ul>
+<p>R provides functions for running sums, products, mins and maxes:cumsum(), cumprod(), cummin(), cummax(); and dplyr provides cummean() for cumulative means. If you need rolling aggregates (i.e. a sum computed over a rolling window), try the RcppRoll package.</p>
+<pre class="{r}"><code>x
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
+
+cumsum(x)
+#&gt;  [1]  1  3  6 10 15 21 28 36 45 55
+
+cummean(x)
+#&gt;  [1] 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5</code></pre>
+<ul>
+<li><p>Logical comparisons, &lt;</code>, &lt;=, &gt;, &gt;=, !=</p></li>
+<li><p>Ranking:</p></li>
+</ul>
+<p>there are a number of ranking functions, but you should start with min_rank(). It does the most usual type of ranking (e.g. 1st, 2nd, 2nd, 4th). The default gives smallest values the small ranks; usedesc(x) to give the largest values the smallest ranks.</p>
+<pre class="{r}"><code>y &lt;- c(1, 2, 2, NA, 3, 4)
+min_rank(y)
+#&gt; [1]  1  2  2 NA  4  5
+
+min_rank(desc(y))
+#&gt; [1]  5  3  3 NA  2  1
+
+row_number(y)
+#&gt; [1]  1  2  3 NA  4  5
+
+dense_rank(y)
+#&gt; [1]  1  2  2 NA  3  4
+
+percent_rank(y)
+#&gt; [1] 0.00 0.25 0.25   NA 0.75 1.00
+
+cume_dist(y)
+#&gt; [1] 0.2 0.6 0.6  NA 0.8 1.0
+
+# The last key verb is summarise(). It collapses a data frame to a single row:
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+
+delays &lt;- flights %&gt;%   group_by(dest) %&gt;%   summarise(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %&gt;%   filter(count &gt; 20, dest != &quot;HNL&quot;)
+
+delays %&gt;%   
+  filter(n &gt; 25) %&gt;%   
+  ggplot(mapping = aes(x = n, y = delay)) +     
+
+geom_point(alpha = 1/10)</code></pre>
+<ul>
+<li>Measures of location:</li>
+</ul>
+<p>we’ve used mean(x), but median(x) is also useful. The mean is the sum divided by the length; the median is a value where 50% of x is above it, and 50% is below it. Measures of spread: sd(x), IQR(x), mad(x). The mean squared deviation, or standard deviation or sd for short, is the standard measure of spread. The interquartile range IQR() and median absolute deviation mad(x) are robust equivalents that may be more useful if you have outliers.</p>
+<ul>
+<li>Measures of rank:</li>
+</ul>
+<p>min(x), quantile(x, 0.25), max(x). Quantiles are a generalisation of the median. For example, quantile(x, 0.25) will find a value of x that is greater than 25% of the values, and less than the remaining 75%.</p>
+<pre class="{r}"><code>not_cancelled %&gt;%   
+  group_by(dest) %&gt;%   
+  summarise(distance_sd = sd(distance)) %&gt;%
+  arrange(desc(distance_sd))</code></pre>
+<ul>
+<li>Measures of position:</li>
+</ul>
+<p>first(x), nth(x, 2), last(x). These work similarly to x[1], x[2], andx[length(x)] but let you set a default value if that position does not exist (i.e. you’re trying to get the 3rd element from a group that only has two elements). For example, we can find the first and last departure for each day:</p>
+<pre class="{r}"><code>not_cancelled %&gt;%   
+  group_by(year, month, day) %&gt;%   
+  mutate(r = min_rank(desc(dep_time))) %&gt;%   
+  filter(r %in% range(r))</code></pre>
+<ul>
+<li>Counts:</li>
+</ul>
+<p>You’ve seen n(), which takes no arguments, and returns the size of the current group. To count the number of non-missing values, use sum(!is.na(x)). To count the number of distinct (unique) values, use n_distinct(x) Counts are so useful that dplyr provides a simple helper if all you want is a count:</p>
+<pre class="{r}"><code>not_cancelled %&gt;%
+  count(dest)
+  daily %&gt;%   
+  ungroup() %&gt;%             # no longer grouped by date  
+  summarise(flights = n())  # all flights</code></pre>
+<ul>
+<li>汇总下：
+<ul>
+<li>+、-、*、、^</li>
+<li>&lt;</code>, &lt;=, &gt;, &gt;=, !=</li>
+<li>log()</li>
+<li>lag() lead()</li>
+<li>cumsum()</li>
+<li>min_rank()</li>
+<li>median()</li>
+<li>IQR()</li>
+<li>quantile()</li>
+<li>nth()</li>
+</ul></li>
+</ul>
+<p><strong>参考自：</strong></p>
+<ul>
+<li><a href="http://r4ds.had.co.nz/transform.html" class="uri">http://r4ds.had.co.nz/transform.html</a></li>
+</ul>
+<p>好书啊，建议从头到尾阅读一遍，查缺补漏，温故而知新，可以为师矣。</p>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数55，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

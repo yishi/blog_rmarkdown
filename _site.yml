@@ -1,4 +1,6 @@
 name: "my-website"
+output_dir: docs
+exclude: ["README.html"]
 navbar:
   title: "Bei's Website"
   right:
@@ -8,7 +10,6 @@ navbar:
       href: https://github.com/yishi
     - text: "About"
       href: about.html
-      
 output:
   html_document:
     # theme: cosmo

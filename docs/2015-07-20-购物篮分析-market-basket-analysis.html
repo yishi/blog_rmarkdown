@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2015-07-20" />
+
+<title>购物篮分析 Market basket analysis</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">购物篮分析 Market basket analysis</h1>
+<h4 class="author"></h4>
+<h4 class="date">2015-07-20</h4>
+
+</div>
+
+
+<p>购物篮分析</p>
+<p>Market basket analysis</p>
+<p>大部分代码都在做数据清理的工作，以及整理成模型所需的格式，真正模型的代码仅一两句。</p>
+<p>Most of the code is cleaning the data, and rearrange the data to the type of which model needed. Codes for model only one or two lines.</p>
+<p>注：数据以数据框格式读入时，字符型默认会保存为因子(<code>factor</code>)，字符拆分函数仅适用于字符型，而不是因子型（表面是字符，实际以数字保存），屡屡报错。需要使用<code>as.character</code>去强制转换类型，然后再进行字符拆分，或者读入数据框时，添加<code>stringsAsFactors = FALSE</code>。</p>
+<p>PS： when you read the data as <code>data.frame</code>, the columns include strings always was treated as a factor by default, then the function <code>strsplit</code> will always give an error, because <code>strsplit</code> only use for the character, not the factor. Factor actually was number, not character. Suggestion: use <code>as.character</code> to transform the factor to a string, or when you read the data as data frame, you should add arguments <code>stringsAsFactors = FALSE</code>.</p>
+<pre class="{r}"><code>library(arules)
+library(arulesViz)
+
+## raw data
+rule_data &lt;- read.csv(&quot;data.csv&quot;)
+
+## new data
+rule_data2 &lt;- data.frame(rule_data[, &quot;清单&quot;])
+names(rule_data2) &lt;- &quot;items&quot;
+rule_data2$new_items &lt;- as.character(rule_data2$items)
+rule_data2$id &lt;- 1 : nrow(rule_data2)
+
+###  找出领用多项物资的行号
+multi_items &lt;- grep(&quot;^:&quot;, rule_data2$new_items, fixed = TRUE)
+###  把一个字符串拆分成多个物资
+temp &lt;- strsplit(rule_data2$new_items[multi_items], &quot;^:&quot;, fixed = TRUE)
+###  delete 逗号后面的规格型号等附加信息
+temp2 &lt;- lapply(temp, function(y) {
+  unlist(lapply(strsplit(y, &quot;，&quot;, fixed = TRUE), function(x) {x[1]}))
+})
+### delete 重复的物资
+temp3 &lt;- lapply(temp2, function(x) {unique(x)})
+len &lt;- unlist(lapply(temp3, function(x) length(x)))
+rep_id &lt;- rep(multi_items, times = len)
+df &lt;- data.frame(id = rep_id, item = unlist(temp3), stringsAsFactors = FALSE)
+
+
+df2 &lt;- rule_data2[-multi_items, c(&quot;id&quot;, &quot;new_items&quot;)]
+###  delete 单个物资逗号后面的规格型号等附加信息
+temp &lt;- unlist(lapply(df2$new_items, function(y) {
+  unlist(lapply(strsplit(y, &quot;，&quot;, fixed = TRUE), function(x) {x[1]}))
+}))
+
+temp2 &lt;- unlist(lapply(temp, function(y) {
+  unlist(lapply(strsplit(y, &quot;,&quot;, fixed = TRUE), function(x) {x[1]}))
+}))
+
+df2$item &lt;- unlist(lapply(temp2, function(y) {
+  unlist(lapply(strsplit(y, &quot; &quot;, fixed = TRUE), function(x) {x[1]}))
+}))
+
+### renewed data
+df3 &lt;- rbind(df, df2[, c(&quot;id&quot;, &quot;item&quot;)])
+
+###  转换为关联规则适用的格式
+test_data &lt;- as(split(df3[ , &quot;item&quot;], df3[ , &quot;id&quot;]), &quot;transactions&quot;)
+inspect(test_data)</code></pre>
+<p>可以使用R包自带的数据Groceries作为测试数据。</p>
+<p>You could use data Groceries which belong to R package to test the model.</p>
+<p>假设有10000个人购买了产品，其中购买A产品的人是1000个，购买B产品的人是2000个， AB同时购买的人是800个。</p>
+<p>支持度指的是关联的产品（假定A产品和B产品关联）同时购买的人数占总人数的比例， 即800/10000=8%，有8%的用户同时购买了A和B两个产品；</p>
+<p>可信度指的是在购买了一个产品之后购买另外一个产品的可能性，例如购买了A产品之后 购买B产品的可信度=800/1000=80%，即80%的用户在购买了A产品之后会购买B产品；</p>
+<p>提升度就是在购买A产品这个条件下购买B产品的可能性与没有这个条件下购买B产品的可能 性之比，没有任何条件下购买B产品可能性=2000/10000=20%，那么提升度=80%/20%=4。</p>
+<pre class="{r}"><code>###  run model
+rules = apriori(test_data, parameter = list(support = 0.01,confidence = 0.2))
+# 按支持度查看规则
+inspect(sort(rules, by = &quot;support&quot;))
+#按置信度查看规则
+inspect(sort(rules, by = &quot;confidence&quot;))
+#也可以用subset做规则的筛选,取&quot;右手边&quot;含有whole milk且lift大于1.2的规则
+sub.rules &lt;- subset(rules, subset = rhs %in% &quot;单头螺栓&quot; &amp; lift &gt; 1.2)
+inspect(sort(sub.rules, by = &quot;confidence&quot;))
+#数据画频繁项的图
+itemFrequencyPlot(test_data,support = 0.01, cex.names = 0.8)
+
+plot(rules, shading = &quot;order&quot;, control = list(main = &quot;Two-key plot&quot;))
+plot(rules, method = &quot;grouped&quot;)
+plot(rules, method = &quot;graph&quot;)</code></pre>
+<p><strong>参考资料：</strong></p>
+<ul>
+<li><p><a href="http://www.douban.com/note/276365088/" class="uri">http://www.douban.com/note/276365088/</a></p></li>
+<li><p><a href="http://cos.name/2013/02/association-rules-with-r-and-sas/" class="uri">http://cos.name/2013/02/association-rules-with-r-and-sas/</a></p></li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数395，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

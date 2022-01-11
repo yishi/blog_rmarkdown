@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="beibei" />
+
+<meta name="date" content="2016-01-16" />
+
+<title>Cluster For Some Short Texts In R</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Cluster For Some Short Texts In R</h1>
+<h4 class="author">beibei</h4>
+<h4 class="date">2016-01-16</h4>
+
+</div>
+
+
+<p>Nowadays, we have many short sentences such as twitter to analysis.</p>
+<p>Here, we choose some book titles as my example texts.</p>
+<p>We try to do some analysis, such as word cloud, social network’s word relation graph, latent semantic analysis model, k-means model, cos similarity method.</p>
+<p>And we also try to compare cluster effects of two different weight methods of term document matrix.</p>
+<p><strong>My title of books:</strong></p>
+<blockquote>
+<p>1 data mining applications with r</p>
+</blockquote>
+<blockquote>
+<p>2 data mining with r learning with case studies</p>
+</blockquote>
+<blockquote>
+<p>3 machine learning for hackers</p>
+</blockquote>
+<blockquote>
+<p>4 machine learning in action</p>
+</blockquote>
+<blockquote>
+<p>5 r graph cookbook</p>
+</blockquote>
+<blockquote>
+<p>6 handbook of data visualization</p>
+</blockquote>
+<blockquote>
+<p>7 visualize this</p>
+</blockquote>
+<blockquote>
+<p>8 thinking with data</p>
+</blockquote>
+<blockquote>
+<p>9 data manipulation with r</p>
+</blockquote>
+<blockquote>
+<p>10 python for data analysis</p>
+</blockquote>
+<blockquote>
+<p>11 building machine learning systems with python</p>
+</blockquote>
+<blockquote>
+<p>12 mastering machine learning with scikit-learn</p>
+</blockquote>
+<blockquote>
+<p>13 matplotlib plotting cookbook</p>
+</blockquote>
+<blockquote>
+<p>14 scikit-learn cookbook</p>
+</blockquote>
+<blockquote>
+<p>15 introduction to python for econometrics statistics and data analysis</p>
+</blockquote>
+<blockquote>
+<p>16 learning python</p>
+</blockquote>
+<p><strong>Social network’s word relation graph</strong></p>
+<p>Learning is matched more than other words, such as machine learning, learning python, learning r, learning system, learning sicikit-learn, and etc.</p>
+<p>Then data is matched such as data mining, data analysis, data applications, data python and etc.</p>
+<p>Note: No matter which weight methods are used, this graph is not changed. Because this graph only concerts weather the word appears with some words, not pay attention to what weight number with this word is.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-1.jpg" alt="" />
+<p class="caption">social network graph</p>
+</div>
+<p><strong>Word Cloud (Weight: Bin)</strong></p>
+<p>This word cloud displays some common words in our titles such as: data machine learning python cookbook.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-2.jpg" alt="" />
+<p class="caption">word cloud</p>
+</div>
+<p><strong>Latent Semantic Analysis Model (Weight: Bin)</strong></p>
+<p>From this model we could see two clear clusters, one is make up by document 3, 4, 11, 12, contains keywords “machine learning”, the other is comprised by document 1, 2, 5, 9, include the letter “r”.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-3.jpg" alt="" />
+<p class="caption">cluster graph</p>
+</div>
+<p><strong>k-means model (Weight: Bin)</strong></p>
+<p><strong>k-means = 2</strong></p>
+<p>cluster 2 : texts which contains “r”</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-4.jpg" alt="" />
+<p class="caption">kmeans2</p>
+</div>
+<p><strong>k-means = 3</strong></p>
+<p>cluster 1 : texts which contains “machine learning”</p>
+<p>cluster 2: texts which contains “cookbook”</p>
+<p>cluster 3: texts which contains “data”</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-5.jpg" alt="" />
+<p class="caption">kmeans3</p>
+</div>
+<p><strong>k-means = 4</strong></p>
+<p>cluster 1 : texts which contains “python data analysis”</p>
+<p>cluster 2: texts which contains “machine learning”</p>
+<p>cluster 3: texts which contains “cookbook”</p>
+<p>cluster 4: texts which contains “data”</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-6.jpg" alt="" />
+<p class="caption">kmeans4</p>
+</div>
+<p><strong>k-means = 5</strong></p>
+<p>It seems like this process should be end.</p>
+<p>This classification is somewhat confused.</p>
+<p>We should try other models.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-7.jpg" alt="" />
+<p class="caption">kmeans5</p>
+</div>
+<p><strong>Cos similarity method (Weight: Bin)</strong></p>
+<p>The bigger the circle is, the stronger similar between two documents.</p>
+<p>Document 1 is similar with 2, 9.</p>
+<p>1 <strong>data mining</strong> applications with r</p>
+<p>2 <strong>data mining</strong> with r learning with case studies</p>
+<p>9 <strong>data</strong> manipulation with r</p>
+<p>Document 3 is similar with 4, 11, 12, 16.</p>
+<p>3 <strong>machine learning</strong> for hackers</p>
+<p>4 <strong>machine learning</strong> in action</p>
+<p>11 building <strong>machine learning</strong> systems with python</p>
+<p>12 mastering <strong>machine learning</strong> with scikit-learn</p>
+<p>16 <strong>learning</strong> python</p>
+<p>Document 10 is similar with 15.</p>
+<p>10 <strong>python</strong> for <strong>data analysis</strong></p>
+<p>15 introduction to <strong>python</strong> for econometric statistics and <strong>data analysis</strong></p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-8.jpg" alt="" />
+<p class="caption">cos</p>
+</div>
+<p><strong>Word Cloud (Weight: Tf-Idf)</strong></p>
+<p>This word cloud displays some few special words in our titles such as: visualize.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-9.jpg" alt="" />
+<p class="caption">word_cloud_tf_idf</p>
+</div>
+<p><strong>Latent Semantic Analysis Model (Weight: Tf-Idf)</strong></p>
+<p>This outcome of cluster is bad!</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-11.jpg" alt="" />
+<p class="caption">lsa_tf_idf</p>
+</div>
+<p><strong>k-means model (Weight: Tf-Idf)</strong></p>
+<p><strong>k-means = 2</strong></p>
+<p>cluster 1 : texts which contains “visualize”</p>
+<p>The few seen word “visualize” is separated get as a cluster.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-12.jpg" alt="" />
+<p class="caption">k_means_2_tf_idf</p>
+</div>
+<p><strong>k-means = 3</strong></p>
+<p>cluster 1 : texts which contains “visualize”</p>
+<p>cluster 3: texts which contains “cookbook”</p>
+<p>The first important is “visualize”, the second important is “cookbook”.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-13.jpg" alt="" />
+<p class="caption">k_means_3_tf_idf</p>
+</div>
+<p><strong>k-means = 4</strong></p>
+<p>cluster 4 : texts which contains “visualize”</p>
+<p>cluster 3: texts which contains “cookbook”</p>
+<p>cluster 1 : texts which contains “machine learning”</p>
+<p>cluster 2: texts which contains “data”</p>
+<p>“data” cluster is include more meanings, such as data mining, data analysis, data visualization, data manipulate and etc.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-14.jpg" alt="" />
+<p class="caption">k_means_4_tf_idf</p>
+</div>
+<p><strong>k-means = 5</strong></p>
+<p>cluster 1: texts which contains “cookbook”</p>
+<p>cluster 2: texts which contains “thinking with data”</p>
+<p>cluster 3 : texts which contains “visualize”</p>
+<p>cluster 4 : texts which contains “machine learning”</p>
+<p>cluster 5 : texts which contains “data”</p>
+<p>This cluster separate “thinking with data” from “data”, is good.</p>
+<p>This weight tf-ifd is good at filter out words which has special meanings.</p>
+<p>The other weight bin only good at find out the common words, when k-means = 5, the clusters are bad.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-15.jpg" alt="" />
+<p class="caption">k_means_5_tf_idf</p>
+</div>
+<p><strong>k-means = 6</strong></p>
+<p>cluster 1 : texts which contains “machine learning”</p>
+<p>cluster 2: texts which contains “cookbook”</p>
+<p>cluster 3 : texts which contains “python”</p>
+<p>cluster 4: texts which contains “thinking with data”</p>
+<p>cluster 5 : texts which contains “data”</p>
+<p>cluster 6 : texts which contains “visualize”</p>
+<p>This cluster separate “python” from “data”, still is good.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-16.jpg" alt="" />
+<p class="caption">k_means_6_tf_idf</p>
+</div>
+<p><strong>k-means = 7</strong></p>
+<p>This clusters are more, except “machine learning”, “visualize”, “cookbook”, “data mining”, “data”, increase clusters “handbook of data visualization” (if we stem the word, then visualization and visualize would be one word), “matplotlib plotting cookbook” plot be separated as one cluster, good.</p>
+<p>I will not try more, if you have interest, you could try it.</p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-17.jpg" alt="" />
+<p class="caption">k_means_7_tf_idf</p>
+</div>
+<p><strong>Cos similarity method (Weight: Tf-Idf)</strong></p>
+<p>The bigger the circle is, the stronger similar between two documents.</p>
+<p>Document 1 is similar with 2.</p>
+<p>1 <strong>data mining</strong> applications with r</p>
+<p>2 <strong>data mining</strong> with r learning with case studies</p>
+<p>Document 3 is similar with 4.</p>
+<p>3 <strong>machine learning</strong> for hackers</p>
+<p>4 <strong>machine learning</strong> in action</p>
+<p>Document 10 is similar with 15, 16.</p>
+<p>10 <strong>python</strong> for <strong>data analysis</strong></p>
+<p>15 introduction to <strong>python</strong> for econometrics statistics and data analysis</p>
+<p>16 learning <strong>python</strong></p>
+<div class="figure">
+<img src="images/2016-01-16-cluster-for-some-short-texts-in-r-18.jpg" alt="" />
+<p class="caption">cos_tf_idf</p>
+</div>
+<p>Below is R code.</p>
+<pre class="{r}"><code># load some packages
+library(tm)
+library(igraph)
+library(wordcloud)
+library(ggplot2)
+library(corrplot)
+
+# using title of books to do text analysis 
+text &lt;- c(&quot;data mining applications with r&quot;,
+          &quot;data mining with r learning with case studies&quot;,
+          &quot;machine learning for hackers&quot;,
+          &quot;machine learning in action&quot;,
+          &quot;r graph cookbook&quot;,
+          &quot;handbook of data visualization&quot;,
+          &quot;visualize this&quot;, &quot;thinking with data&quot;,
+          &quot;data manipulation with r&quot;,
+          &quot;python for data analysis&quot;,
+          &quot;building machine learning systems with python&quot;,
+          &quot;mastering machine learning with scikit-learn&quot;,
+          &quot;matplotlib plotting cookbook&quot;,
+          &quot;scikit-learn cookbook&quot;,
+          &quot;introduction to python for econometrics statistics and data analysis&quot;,
+          &quot;learning python&quot;)
+
+# make a corpus
+wordcorpus &lt;- Corpus(VectorSource(text))
+
+control &lt;- list(removePunctuation = TRUE,
+                removeNumbers = TRUE, 
+                wordLengths = c(1, Inf), weighting = weightBin,
+                stopwords = TRUE)
+
+# if you want to use the other weight method, you could replace the above code with below one:
+
+control &lt;- list(removePunctuation = TRUE,
+                removeNumbers = TRUE, 
+                wordLengths = c(1, Inf), weighting = weightTfIdf,
+                stopwords = TRUE)
+
+# Note: here we do not deal with the problem of stemming of the word, because here I failed to install the dependence package Snowball, if you want to do some stem work, you could use the function tm_map(wordcorpus, stemDocument) to do it.
+
+# make a term document matrix
+tdm &lt;- TermDocumentMatrix(wordcorpus, control)
+
+# compute the word frequency
+wordFreq &lt;- sort(rowSums(as.matrix(tdm)), decreasing = TRUE)
+
+####################  word cloud ################
+wordcloud(words = names(wordFreq), freq = wordFreq,
+
+
+############## social network&#39;s word relation graph#########
+# make a term term matrix
+tdm &lt;- as.matrix(tdm)
+term_term &lt;- tdm %*% t(tdm)
+
+# remove loops
+g &lt;- simplify(g)
+# set labels and degrees of vertex
+V(g)$label &lt;- V(g)$name
+V(g)$degree &lt;- degree(g)
+
+# set seed to make the layout reproducible
+set.seed(3952)
+V(g)$label.cex &lt;- 2.2 * V(g)$degree / max(V(g)$degree)+ .2
+V(g)$label.color &lt;- rgb(0, 0, .2, .8)
+V(g)$frame.color &lt;- NA
+egam &lt;- (log(E(g)$weight)+.4) / max(log(E(g)$weight)+.4)
+E(g)$width &lt;- egam
+# plot the graph
+plot(g, layout=layout.fruchterman.reingold(g))
+
+###########  latent semantic analysis model ###########
+t &lt;- tdm
+out &lt;- svd(t)
+rownames(out$v) &lt;- dimnames(t)$Docs
+rownames(out$u) &lt;- dimnames(t)$Terms
+
+# term semantic matrix
+datau &lt;- data.frame(out$u[,2:3])
+# document semantic matrix
+datav &lt;- data.frame(out$v[,2:3])
+
+ggplot()+
+  geom_point(data = datau, aes(X1, X2), size = 4, color = &quot;blue&quot;) +
+  geom_text(data = datau, aes(X1, X2), label = rownames(datau), vjust = 2) +
+  geom_point(data = datav, aes(X1, X2), size = 5, color = &#39;red4&#39;) +
+  geom_text(data = datav, aes(X1, X2), label = rownames(datav), vjust = 2) +
+  theme_bw()
+  
+############### k-means model #################
+km &lt;- kmeans(t(tdm), 3)
+km$cluster
+
+################ cos similarity method ###########
+doc_doc &lt;- t(tdm) %*% tdm
+abs_n &lt;- apply(t(tdm), 1, function(x) sqrt(sum(x^2)))
+abs_m &lt;- abs_n %*% t(abs_n)
+cos &lt;- doc_doc / abs_m
+corrplot(cos, type = &quot;lower&quot;, diag = FALSE)
+</code></pre>
+<p>That’s all.</p>
+<p>Hoping I will get your feedback.</p>
+<p>Welcome your advises and suggestion!</p>
+<p>Just record, this article was posted at linkedin, and have 820 views to November 2021.</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

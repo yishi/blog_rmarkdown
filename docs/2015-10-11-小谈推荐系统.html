@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2015-10-11" />
+
+<title>小谈推荐系统</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">小谈推荐系统</h1>
+<h4 class="author"></h4>
+<h4 class="date">2015-10-11</h4>
+
+</div>
+
+
+<p>最出名的推荐系统估计要非“协同过滤”莫属，经典的示例就是网站上的各种推荐，根据客户对美食或书籍或电影的评分，来推荐给爱好相似的客户类似商品。</p>
+<p>但是，如果你没有任何客户对商品的评分，怎么办呢？评分也是需要积累的呀。有人会说打标签，好听点就是用户画像。打标签也不错，不过是个纯粹的体力活、苦活、累活。我们又不想太累，用上点简单的文本挖掘吧。当然，也许这些方法都是为了打标签，哈哈</p>
+<p><strong>1. 最简单的推荐系统（搜索——匹配某字段中的关键词）</strong></p>
+<p>直接在字段“关键字段”中使用正则表达式搜索关键字，返回大量包含该关键字的数据。</p>
+<p><u>R代码：</u></p>
+<pre class="{r}"><code>#  读入数据
+data &lt;- read.csv(&quot;your_file.csv&quot;, stringsAsFactors = F)
+
+#  找出合适的变量
+data2 &lt;- data[, c(13, 14, 16, 22, 26,
+                29, 30, 41, 42, 43, 45, 47)]
+                
+# 正则表达式找出匹配的行号
+id &lt;- grepl(&quot;某关键词&quot;, data2$key)
+
+# 返回所有匹配的数据
+out &lt;- data2[id, ]
+
+# 返回前15行及个别列
+out[1:15, c(5, 6, 12)]</code></pre>
+<p><u>python代码：</u></p>
+<pre class="{python}"><code># 导入pandas 
+import pandas as pd
+# 读入数据
+data = pd.read_csv(&quot;your_file.csv&quot;, encoding = &quot;utf-8&quot;)
+# 匹配关键词，返回true或false
+rain_type = data.key.str.contains(u&#39;某关键词&#39;)
+# 返回所有包含关键词的数据
+rain_d = data[rain_type == 1]</code></pre>
+<p><strong>2. 优先级筛选的推荐方法：</strong></p>
+<p>首先，把字段“关键字段”中信息整理成一个字段“类型”，查找与目标数据的“类型”相同的数据。</p>
+<p>然后，在同类型的数据中继续筛选出发生在同一个地点，甚至同一个人员。</p>
+<p><u>R代码：</u></p>
+<pre class="{r}"><code>data_s &lt;- read.csv(&quot;your_file.csv&quot;, stringsAsFactors = F)
+temp1 &lt;- data_s[grepl(&quot;关键词1&quot;, data_s$key), ]
+temp1$type &lt;- &quot;关键词1&quot;
+temp2 &lt;- data_s[grepl(“关键词2&quot;, data_s$key), ]
+temp2$type &lt;- &quot;关键词2&quot;
+data_new &lt;- rbind(temp1, temp2)
+obj_id &lt;- 2
+obj &lt;- data_new[obj_id, ]
+train &lt;- data_new[-obj_id, ]
+
+#  找出同种类别的
+train2 &lt;- train[train$type == obj$type, ]
+
+#  找出同类别发生在同一个站点的
+if (sum(train2$PLACE_NAME == obj$PLACE_NAME) == 0) {
+  train3 &lt;- train2
+} else {
+  train3 &lt;- train2[train2$PLACE_NAME == obj$PLACE_NAME, ]
+}
+
+#  找出同类别发生在同一个站点的同一个人的
+if (sum(train3$FINDER == obj$FINDER) == 0) {
+  train4 &lt;- train3
+} else {
+  train4 &lt;- train3[train3$FINDER == obj$FINDER, ]
+}
+train4[11:14, ]
+obj[, c(1:5)]</code></pre>
+<p><u>python代码：</u></p>
+<pre class="{python}"><code>import pandas as pd
+data = pd.read_csv(&quot;your_file.csv&quot;, encoding = &quot;utf-8&quot;)
+#  找出包含某种关键词的数据
+temp1 = data[data.key.str.contains(u&#39;关键词1&#39;) == 1]
+temp1[&#39;type&#39;] = &quot;关键词1&quot;
+temp2 = data[data.key.str.contains(u&#39;关键词2&#39;) == 1]
+temp2[&#39;type&#39;] = &quot;关键词2&quot;
+# 合并两种关键词的数据
+data_new = pd.concat([temp1, temp2])
+# 给出目标观察值的位置，第几个数值
+obj_id = 4
+# 返回目标观察值
+obj = data_new.iloc[obj_id, ]
+
+# 从数据集中排除目标观察值的标签，不是位置，留下待推荐的数据
+# obj.name返回目标观察值的index，即标签，是46
+# obj_id是目标观察值的位置，是4
+train = data_new.drop(obj.name)
+# 找出同类别
+train2 = train[train.type == obj.type]
+# 对同类别数据，继续筛选，找发生在同一个地点的数据
+#  这里不知道是什么原因，选列变量要根据位置，根据名字则失败
+if (sum(train2.iloc[:, 0] == obj[0]) == 0):
+    train3 = train2
+else:
+    train3 = train2[train2.iloc[:, 0] == obj[0]] 
+# 继续根据优先级筛选，在上面的基础上，筛选是否有同一个人的数据
+if (sum(train3.iloc[:, 1] == obj[1]) == 0):
+    train4 = train3
+else:
+    train4 = train3[train3.iloc[:, 1] == obj[1]]
+
+obj
+train4.head()</code></pre>
+<p><strong>3. 基于Simhash和海明距离算法的推荐：</strong></p>
+<p>首先，把字段“关键字段”的文字进行分词，提取关键字，计算simhash值。</p>
+<p>然后，根据每行数据的simhash值，计算目标数据与其他所有数据之间的海明距离，推荐距离目标数据最近的前2个数据。</p>
+<p><u>R代码：</u></p>
+<pre class="{r}"><code>library(jiebaR)
+
+data_s &lt;- read.csv(&quot;your_file.csv&quot;, stringsAsFactors = F)
+
+sim &lt;- function(data, obj) {
+  #  初始化分词引擎
+  simhasher = worker(&quot;simhash&quot;)
+
+  #  计算需要匹配的语句与其他所有语句之间的距离
+  out &lt;- lapply(data$key, FUN = function(x) {
+   as.numeric(distance(data$key[obj], x, simhasher)$distance)
+  })
+
+  # 距离以行号为名字
+  names(out) &lt;- 1 : length(data$key)
+
+  # 删除需要匹配的语句与自身的距离
+  out &lt;- out[-obj]
+
+  # 找到与需要匹配的语句距离从小到大的行号
+  id &lt;- as.numeric(names(sort(unlist(out))))
+
+  # 返回与需要匹配的语句距离从小到大的推荐
+  list(&quot;obj&quot; = data[obj, c(1, 2, 3, 4, 5)],
+      &quot;degree&quot; = paste(100 - unname(sort(unlist(out))[1:2]), &quot;%&quot;, sep = &quot;&quot;),
+      &quot;similar&quot; = data[id[1:2], c(1:9)])
+}
+
+sim(data = data_s, obj = 1)</code></pre>
+<p><u>python代码：</u></p>
+<pre class="{python}"><code>import pandas as pd
+import jieba
+import jieba.analyse
+#  jiebaR中直接有计算simhash值和海明距离的函数
+# jieba中貌似没有
+# 同一个项目不同语言的接口，功能上居然有差异，有点吃惊
+# 幸好找到有人实现了simhash在python中
+http://blog.sina.com.cn/s/blog_62b8329101017vv3.html  
+###  simhash算法的python实现
+class simhash:
+    # 构造函数
+    def __init__(self, tokens = &#39;&#39;, hashbits = 128):
+       self.hashbits = hashbits
+       self.hash = self.simhash(tokens);
+       
+    # toString函数
+    def __str__(self):
+       return str(self.hash)
+   
+    # 生成simhash值
+    def simhash(self, tokens):
+       v = [0] * self.hashbits
+       for t in [self._string_hash(x) for x in tokens]:
+           # t为token的普通hash值
+           for i in range(self.hashbits):
+               bitmask = 1 &lt;&lt; i
+               if t &amp; bitmask :
+                   v[i] += 1 # 查看当前bit位是否为1， 是的话将该位+1
+               else:
+                   v[i] -= 1 # 否则的话，该位-1
+       fingerprint = 0
+       for i in range(self.hashbits):
+           if v[i] &gt;= 0:
+               fingerprint += 1 &lt;&lt; i
+       return fingerprint # 整个文档的fingerprint为最终各个位 &gt;=0的和
+   
+    # 求海明距离
+    def hamming_distance(self, other):
+       x = (self.hash ^ other.hash) &amp; ((1 &lt;&lt; self.hashbits) - 1)
+       tot = 0;
+       while x:
+           tot += 1
+           x &amp;= x - 1
+       return tot
+   
+    # 求相似度
+    def similarity (self, other):
+       a = float(self.hash)
+       b = float(other.hash)
+       if a &gt; b : return b / a
+       else: return a / b
+       
+    # 针对source生成hash值 （一个可变长度版本的python的内置散列）
+    def _string_hash(self, source):
+       if source == &quot;&quot;:
+           return 0
+       else:
+           x = ord(source[0]) &lt;&lt; 7
+           m = 1000003
+           mask = 2 ** self.hashbits - 1
+           for c in source:
+               x = ((x * m) ^ ord(c)) &amp; mask
+           x ^= len(source)
+           if x == -1:
+               x = -2
+           return x 
+########################################################
+# 通过计算目标数据和其他数据的simhash值，得到相似度
+def sim (data, obj):
+    obj_data = data.iloc[obj, ]
+    # 计算目标数据的simhash值
+    word_obj = jieba.analyse.extract_tags(data.DEFECT_PHENOMENON.iloc[obj])
+    hash_obj = simhash(word_obj)
+    # 计算其他数据的simhash值并计算相似度
+    sim_value = []
+    for i in range(data.DEFECT_PHENOMENON.size):
+       word_other = jieba.analyse.extract_tags(data.DEFECT_PHENOMENON.iloc[i])
+       hash_other = simhash(word_other)
+       sim_value.append(hash_obj.similarity(hash_other))
+    # 把列表转换为pandas中的序列，因为有index记录每一个相似度对应的data中的行号，即位置
+    # 删除目标变量与自身的相似度数值
+    sim_series = pd.Series(sim_value).drop(obj_data.name)
+    return sim_series 
+###############################
+# 读入数据
+data = pd.read_csv(&quot;your_file.csv&quot;, encoding = &quot;utf-8&quot;)
+# 数据清洗
+# 关键字段的数据类型，应该都为unicode，因为部分数据缺失为nan，类型为float，提取文本关键词报错
+# 提取出关键字段非空的数据
+data_new = data[data.key.isnull() == 0]
+# 得到目标数据与所有其他数据之间的相似度
+out = sim(data = data_new, obj = 9)
+# 按照从大到小的顺序把相似度排序
+sorted_out = out.sort(ascending = False, inplace= False)
+# 目标关键词
+print data_new.key.iloc[9]
+# 推荐的最相似的前五个关键词
+data_new.key.iloc[sorted_out.index[0:5]]</code></pre>
+<p>经人工测试了几个数据，python版的效果没有R版的好，不知道是因为python版的simhash算法和jiebaR内置的simhash算法的区别，还是python版的提取关键词和jiebaR的提取关键词有区别。 后来经检查，还是python版的simhash算法的jiebaR中内置的算法不同，前者只考虑了关键词，后者还考虑了关键词的权重，显然，后者的权重不是白加的，效果不是一般的好。 改进了python版的simhash算法，添加了权重部分，效果好多了，但还是没有jiebaR的效果好，应该是关键词对应的权重的差别，jieba和jiebaR输出的关键词的权重不同，对同样的数据。</p>
+<p>更好点，其实可以先用simhash和海明距离找到类似的文本，然后使用优先级过滤再对类似的文本进行排序，更精细的确定相似性。</p>
+<p>ps: <u>python代码：</u></p>
+<pre class="{python}"><code>###  添加了权重的simhash算法#######################
+###  simhash算法的python实现
+class simhash:
+    # 构造函数
+    def __init__(self, tokens = &#39;&#39;, hashbits = 128):
+       self.hashbits = hashbits
+       self.hash = self.simhash(tokens);
+       
+    # toString函数
+    def __str__(self):
+       return str(self.hash)
+   
+    # 生成simhash值
+    def simhash(self, tokens):
+       v = [0] * self.hashbits
+       
+       # tokens 代表关键词和对应的权重
+       # only_token 代表关键词
+       only_token = [x[0] for x in tokens]
+       # 得到关键词对应的hash值
+       only_hash = [self._string_hash(x) for x in only_token]
+       # only_weight 代表关键词对应的权重
+       only_weight = [x[1] for x in tokens]
+       # 把hash值和对应的权重组合在一起
+       hash_weight = zip(only_hash, only_weight)
+       
+       for t in hash_weight:
+           # t为token的普通hash值权重对
+           for i in range(self.hashbits):
+               bitmask = 1 &lt;&lt; i
+               if t[0] &amp; bitmask :
+                   v[i] += t[1] # 查看当前bit位是否为1， 是的话将该位+weight
+               else:
+                   v[i] -= t[1] # 否则的话，该位-weight
+       fingerprint = 0
+       for i in range(self.hashbits):
+           if v[i] &gt;= 0:
+               fingerprint += 1 &lt;&lt; i
+       return fingerprint # 整个文档的fingerprint为最终各个位 &gt;=0的和
+   
+    # 求海明距离
+    def hamming_distance(self, other):
+       x = (self.hash ^ other.hash) &amp; ((1 &lt;&lt; self.hashbits) - 1)
+       tot = 0;
+       while x:
+           tot += 1
+           x &amp;= x - 1
+       return tot
+   
+    # 求相似度
+    def similarity (self, other):
+       a = float(self.hash)
+       b = float(other.hash)
+       if a &gt; b : return b / a
+       else: return a / b
+       
+    # 针对source生成hash值 （一个可变长度版本的python的内置散列）
+    def _string_hash(self, source):
+       if source == &quot;&quot;:
+           return 0
+       else:
+           x = ord(source[0]) &lt;&lt; 7
+           m = 1000003
+           mask = 2 ** self.hashbits - 1
+           for c in source:
+               x = ((x * m) ^ ord(c)) &amp; mask
+           x ^= len(source)
+           if x == -1:
+               x = -2
+           return x 
+ 
+#  更新后的函数，限制关键词数量为5个，因为这里的测试文本就是几个句子，过多的关键词反而掩盖了重点
+
+# 因为前面的数据结构发生了变化，下面的函数也有少许变动。
+# 通过计算目标数据和其他数据的simhash值，得到相似度
+def sim (data, obj):
+    obj_data = data.iloc[obj, ]
+    # 计算目标数据的simhash值
+    word_obj = jieba.analyse.extract_tags(data.key.iloc[obj], topK = 5, withWeight= True)
+    hash_obj = simhash(word_obj)
+    # 计算其他数据的simhash值并计算相似度
+    sim_value = []
+    for i in range(data.key.size):
+       word_other = jieba.analyse.extract_tags(data.key.iloc[i], topK = 5, withWeight= True)
+       hash_other = simhash(word_other)
+       sim_value.append(hash_obj.similarity(hash_other))
+    # 把列表转换为pandas中的序列，因为有index记录每一个相似度对应的data中的行号，即位置
+    # 删除目标变量与自身的相似度数值
+    sim_series = pd.Series(sim_value).drop(obj_data.name)
+    return sim_series
+
+# 得到目标数据与所有其他数据之间的相似度
+out = sim(data = data_new, obj = 9)
+# 按照从大到小的顺序把相似度排序
+sorted_out = out.sort(ascending = False, inplace= False)
+
+# 目标关键词
+print data_new.DEFECT_PHENOMENON.iloc[9]
+
+# 推荐的最相似的前五个关键词
+data_new.DEFECT_PHENOMENON.iloc[sorted_out.index[0:5]]</code></pre>
+<p>最后附上一个图，这个图清楚明了的解释了simhash算法的原理，这张图的原始出处不知道来自哪里，但几乎所有讲解simhash的文章都使用了这个图。</p>
+<p><img src="images/2015-10-11-小谈推荐系统-1.jpg" /></p>
+<p><strong>参考网址：</strong></p>
+<ul>
+<li><p><a href="http://yanyiwu.com/work/2014/01/30/simhash-shi-xian-xiang-jie.html" class="uri">http://yanyiwu.com/work/2014/01/30/simhash-shi-xian-xiang-jie.html</a></p></li>
+<li><p><a href="http://blog.sina.com.cn/s/blog_62b8329101017vv3.html" class="uri">http://blog.sina.com.cn/s/blog_62b8329101017vv3.html</a></p></li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数144，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

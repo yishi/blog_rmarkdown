@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2014-06-10" />
+
+<title>数据挖掘——垃圾邮件过滤</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">数据挖掘——垃圾邮件过滤</h1>
+<h4 class="author"></h4>
+<h4 class="date">2014-06-10</h4>
+
+</div>
+
+
+<p>来自《Machine learning for Hackers》第三章</p>
+<p>原始数据来自 <a href="http://spamassassin.apache.org/publiccorpus/" class="uri">http://spamassassin.apache.org/publiccorpus/</a> 作者的github网页也提供了数据和代码 <a href="https://github.com/johnmyleswhite/ML_for_Hackers" class="uri">https://github.com/johnmyleswhite/ML_for_Hackers</a></p>
+<p>数据是2002年、2003年和2005年的正常邮件，容易混为垃圾邮件的正常邮件和垃圾邮件三类。</p>
+<p>思路很清晰：使用2002年的数据作为训练数据，2003年和2005年的数据作为测试数据。</p>
+<p>在2002年的数据中，提取垃圾邮件的信件内容构建成词库，清理下詞庫（如刪除停用詞，刪除數字等），計算一些指標（如某個單詞的出現頻率、密度等），使用正常郵件的信件內容也構建類似的詞庫。</p>
+<p>判別某新郵件是否為垃圾郵件：根据贝叶斯公式，計算新郵件中属于垃圾邮件或正常邮件的概率大小，如果属于垃圾邮件的概率大于属于正常邮件的概率，则判别为垃圾邮件。</p>
+<p>关键就是如何使用贝叶斯公式？ 这里使用到了朴素贝叶斯来进行分类，有关贝叶斯用于垃圾邮件判别的简介详见大牛博客： <a href="http://mindhacks.cn/2008/09/21/the-magical-bayesian-method/" class="uri">http://mindhacks.cn/2008/09/21/the-magical-bayesian-method/</a> 。</p>
+<p>摘抄部分如下：</p>
+<p>贝叶斯垃圾邮件过滤器</p>
+<p>问题是什么？</p>
+<p>问题是，给定一封邮件，判定它是否属于垃圾邮件。</p>
+<p>按照先例，我们还是用 D 来表示这封邮件，注意 D 由 N 个单词组成。我们用 h+ 来表示垃圾邮件，h- 表示正常邮件。问题可以形式化地描述为求：</p>
+<p>P(h+|D) = P(h+) * P(D|h+) / P(D)</p>
+<p>P(h-|D) = P(h-) * P(D|h-) / P(D)</p>
+<p>其中 P(h+) 和 P(h-) 这两个先验概率都是很容易求出来的，只需要计算一个邮件库里面垃圾邮件和正常邮件的比例就行了。</p>
+<p>然而 P(D|h+) 却不容易求，因为 D 里面含有 N 个单词 d1, d2, d3, .. ，所以P(D|h+) = P(d1,d2,..,dn|h+) 。我们又一次遇到了数据稀疏性，为什么这么说呢？P(d1,d2,..,dn|h+) 就是说在垃圾邮件当中出现跟我们目前这封邮件一模一样的一封邮件的概率是多大！开玩笑，每封邮件都是不同的，世界上有无穷多封邮件。瞧，这就是数据稀疏 性，因为可以肯定地说，你收集的训练数据库不管里面含了多少封邮件，也不可能找出一封跟目前这封一模一样的。结果呢？我们又该如何来计算 P(d1,d2,..,dn|h+) 呢？</p>
+<p>我们将 P(d1,d2,..,dn|h+) 扩展为： P(d1|h+) * P(d2|d1, h+) * P(d3|d2,d1, h+) * .. 。熟悉这个式子吗？这里我们会使用一个更激进的假设，我们假设 di 与 di-1 是完全条件无关的，于是式子就简化为 P(d1|h+) * P(d2|h+) * P(d3|h+) * .. 。这个就是所谓的条件独立假设，也正是朴素贝叶斯方法的朴素之处。而计算 P(d1|h+) * P(d2|h+) * P(d3|h+) * .. 就太简单了，只要统计 di 这个单词在垃圾邮件中出现的频率即可。</p>
+<p>R代码如下：</p>
+<pre class="{r}"><code># 03-Classification/email_classify.R
+# Load libraries
+library(&#39;tm&#39;)
+library(&#39;ggplot2&#39;)
+
+# Set the global paths
+spam.path &lt;- file.path(&quot;spam&quot;)
+spam2.path &lt;- file.path(&quot;spam_2&quot;)
+easyham.path &lt;- file.path(&quot;easy_ham&quot;)
+easyham2.path &lt;- file.path(&quot;easy_ham_2&quot;)
+hardham.path &lt;- file.path(&quot;hard_ham&quot;)
+hardham2.path &lt;- file.path(&quot;hard_ham_2&quot;)
+
+# Return a single element vector of just the email body
+# This is a very simple approach, as we are only using 
+# words as features
+get.msg &lt;- function(path)
+{
+  con &lt;- file(path, open = &quot;rt&quot;, encoding = &quot;latin1&quot;)
+  text &lt;- readLines(con)
+  # The message always begins after the first full line break
+  if (length(which(text == &quot;&quot;)) != 0 &amp; which(text == &quot;&quot;)[1] != length(text)) {
+    msg &lt;- text[seq(which(text == &quot;&quot;)[1] + 1, length(text), 1)] 
+  }else msg &lt;- &quot;&quot; 
+  close(con)
+  return(paste(msg, collapse = &quot;\n&quot;))
+}
+
+# Get all the SPAM-y email into a single vector
+spam.docs &lt;- dir(spam.path)
+spam.docs &lt;- spam.docs[which(spam.docs != &quot;cmds&quot;)]
+all.spam &lt;- sapply(spam.docs,
+                  function(p) get.msg(file.path(spam.path, p)))
+
+# Create a TermDocumentMatrix (TDM) from the corpus of SPAM email.
+# The TDM control can be modified, and the sparsity level can be
+# altered.  This TDM is used to create the feature set used to do
+# train our classifier.
+get.tdm &lt;- function(doc.vec)
+{
+  control &lt;- list(stopwords = TRUE,
+                 removePunctuation = TRUE,
+                 removeNumbers = TRUE,
+                 minDocFreq = 2)
+  doc.corpus &lt;- Corpus(VectorSource(doc.vec))
+  doc.dtm &lt;- TermDocumentMatrix(doc.corpus, control)
+  return(doc.dtm)
+}
+
+# Create a DocumentTermMatrix from that vector
+spam.tdm &lt;- get.tdm(all.spam)
+
+# Create a data frame that provides the feature set from the training SPAM data
+spam.matrix &lt;- as.matrix(spam.tdm)
+# 某個單詞在所有文檔中出現的總次數
+spam.counts &lt;- rowSums(spam.matrix)
+spam.df &lt;- data.frame(cbind(names(spam.counts),
+                           as.numeric(spam.counts)),
+                     stringsAsFactors = FALSE)
+names(spam.df) &lt;- c(&quot;term&quot;, &quot;frequency&quot;)
+spam.df$frequency &lt;- as.numeric(spam.df$frequency)
+# 某個單詞在文檔中出現的頻率，即文檔的覆蓋率吧
+spam.occurrence &lt;- sapply(1:nrow(spam.matrix),
+                         function(i)
+                         {
+                           length(which(spam.matrix[i, ] &gt; 0)) / ncol(spam.matrix)
+                         })
+# 某個單詞出現的次數占所有單詞的總次數的比例
+spam.density &lt;- spam.df$frequency / sum(spam.df$frequency)
+
+# Add the term density and occurrence rate
+spam.df &lt;- transform(spam.df,
+                    density = spam.density,
+                    occurrence = spam.occurrence)
+
+head(spam.df[order(spam.df$occurrence, decreasing = T), ])
+head(spam.df[with(spam.df, order(-occurrence)), ])
+#       term frequency    density occurrence
+# 6139  email      728 0.006301066     0.552
+# 15024 please      378 0.003271708     0.466
+# 11786  list      385 0.003332295     0.414
+# 2285   body      355 0.003072635     0.390
+# 22012  will      714 0.006179892     0.386
+# 9245   html      390 0.003375571     0.374
+
+# Now do the same for the EASY HAM email
+easyham.docs &lt;- dir(easyham.path)
+easyham.docs &lt;- easyham.docs[which(easyham.docs != &quot;cmds&quot;)]
+all.easyham &lt;- sapply(easyham.docs[1:length(spam.docs)],
+                     function(p) get.msg(file.path(easyham.path, p)))
+
+easyham.tdm &lt;- get.tdm(all.easyham)
+
+easyham.matrix &lt;- as.matrix(easyham.tdm)
+easyham.counts &lt;- rowSums(easyham.matrix)
+easyham.df &lt;- data.frame(cbind(names(easyham.counts),
+                              as.numeric(easyham.counts)),
+                        stringsAsFactors = FALSE)
+names(easyham.df) &lt;- c(&quot;term&quot;, &quot;frequency&quot;)
+easyham.df$frequency &lt;- as.numeric(easyham.df$frequency)
+easyham.occurrence &lt;- sapply(1:nrow(easyham.matrix),
+                            function(i)
+                            {
+                              length(which(easyham.matrix[i, ] &gt; 0)) / ncol(easyham.matrix)
+                            })
+easyham.density &lt;- easyham.df$frequency / sum(easyham.df$frequency)
+
+easyham.df &lt;- transform(easyham.df,
+                       density = easyham.density,
+                       occurrence = easyham.occurrence)
+
+head(easyham.df[order(easyham.df$occurrence, decreasing = T), ])
+#       term frequency    density occurrence
+# 6615  list      289 0.004782630     0.430
+# 12400 wrote      227 0.003756599     0.370
+# 4716 group      217 0.003591110     0.358
+# 11811  use      252 0.004170321     0.358
+# 1476   can      297 0.004915021     0.344
+# 6196  just      250 0.004137223     0.324
+
+# This is the our workhorse function for classifying email.  It takes
+# two required paramters: a file path to an email to classify, and
+# a data frame of the trained data.  The function also takes two
+# optional parameters.  First, a prior over the probability that an email
+# is SPAM, which we set to 0.5 (naive), and constant value for the
+# probability on words in the email that are not in our training data.
+# The function returns the naive Bayes probability that the given email
+# is SPAM. 
+classify.email &lt;- function(path, training.df, prior = 0.5, c = 1e-6)
+{
+  # Here, we use many of the support functions to get the
+  # email text data in a workable format
+  msg &lt;- get.msg(path)
+  msg.tdm &lt;- get.tdm(msg)
+  msg.freq &lt;- rowSums(as.matrix(msg.tdm))
+  # Find intersections of words
+  msg.match &lt;- intersect(names(msg.freq), training.df$term)
+  # Now, we just perform the naive Bayes calculation
+  if(length(msg.match) &lt; 1)
+  {
+    return(prior * c ^ (length(msg.freq)))
+  }
+  else
+  {
+    match.probs &lt;- training.df$occurrence[match(msg.match, training.df$term)]
+    return(prior * prod(match.probs) * c ^ (length(msg.freq) - length(msg.match)))
+  }
+}
+
+# Run classifer against HARD HAM
+hardham.docs &lt;- dir(hardham.path)
+hardham.docs &lt;- hardham.docs[which(hardham.docs != &quot;cmds&quot;)]
+
+# path &lt;- file.path(hardham.path, hardham.docs[1])
+
+hardham.spamtest &lt;- sapply(hardham.docs,
+                          function(p) classify.email(file.path(hardham.path, p), training.df = spam.df))
+
+hardham.hamtest &lt;- sapply(hardham.docs,
+                         function(p) classify.email(file.path(hardham.path, p), training.df = easyham.df))
+
+hardham.res &lt;- ifelse(hardham.spamtest &gt; hardham.hamtest,
+                     TRUE,
+                     FALSE)
+summary(hardham.res)
+
+# Finally, attempt to classify the HARDHAM data using the classifer developed above.
+# The rule is to classify a message as SPAM if Pr(email) = SPAM &gt; Pr(email) = HAM
+
+spam.classifier &lt;- function(path)
+{
+  pr.spam &lt;- classify.email(path, spam.df)
+  pr.ham &lt;- classify.email(path, easyham.df)
+  return(c(pr.spam, pr.ham, ifelse(pr.spam &gt; pr.ham, 1, 0)))
+}
+
+spam.classifier &lt;- function(path)
+{
+  pr.spam &lt;- classify.email(path, spam.df, prior = 0.2)
+  pr.ham &lt;- classify.email(path, easyham.df, prior = 0.8)
+  return(c(pr.spam, pr.ham, ifelse(pr.spam &gt; pr.ham, 1, 0)))
+}
+
+class.df &lt;- suppressWarnings(lapply(hardham.docs,
+                                         function(p)
+                                         {
+                                           spam.classifier(file.path(hardham.path, p))
+                                         }))
+head(class.df)
+
+################# test classifier ##############
+# Get lists of all the email messages
+easyham2.docs &lt;- dir(easyham2.path)
+easyham2.docs &lt;- easyham2.docs[which(easyham2.docs != &quot;cmds&quot;)]
+
+hardham2.docs &lt;- dir(hardham2.path)
+hardham2.docs &lt;- hardham2.docs[which(hardham2.docs != &quot;cmds&quot;)]
+
+spam2.docs &lt;- dir(spam2.path)
+spam2.docs &lt;- spam2.docs[which(spam2.docs != &quot;cmds&quot;)]
+
+# Classify them all!
+easyham2.class &lt;- suppressWarnings(lapply(easyham2.docs,
+                                         function(p)
+                                         {
+                                           spam.classifier(file.path(easyham2.path, p))
+                                         }))
+hardham2.class &lt;- suppressWarnings(lapply(hardham2.docs,
+                                         function(p)
+                                         {
+                                           spam.classifier(file.path(hardham2.path, p))
+                                         }))
+spam2.class &lt;- suppressWarnings(lapply(spam2.docs,
+                                      function(p)
+                                      {
+                                        spam.classifier(file.path(spam2.path, p))
+                                      }))
+# Create a single, final, data frame with all of the classification data in it
+easyham2.matrix &lt;- do.call(rbind, easyham2.class)
+easyham2.final &lt;- cbind(easyham2.matrix, &quot;EASYHAM&quot;)
+
+hardham2.matrix &lt;- do.call(rbind, hardham2.class)
+hardham2.final &lt;- cbind(hardham2.matrix, &quot;HARDHAM&quot;)
+
+spam2.matrix &lt;- do.call(rbind, spam2.class)
+spam2.final &lt;- cbind(spam2.matrix, &quot;SPAM&quot;)
+
+class.matrix &lt;- rbind(easyham2.final, hardham2.final, spam2.final)
+class.df &lt;- data.frame(class.matrix, stringsAsFactors = FALSE)
+names(class.df) &lt;- c(&quot;Pr.SPAM&quot; ,&quot;Pr.HAM&quot;, &quot;Class&quot;, &quot;Type&quot;)
+class.df$Pr.SPAM &lt;- as.numeric(class.df$Pr.SPAM)
+class.df$Pr.HAM &lt;- as.numeric(class.df$Pr.HAM)
+class.df$Class &lt;- as.logical(as.numeric(class.df$Class))
+class.df$Type &lt;- as.factor(class.df$Type)
+head(class.df)
+
+get.results &lt;- function(bool.vector)
+{
+  results &lt;- c(length(bool.vector[which(bool.vector == FALSE)]) / length(bool.vector),
+              length(bool.vector[which(bool.vector == TRUE)]) / length(bool.vector))
+  return(results)
+}
+
+# Save results as a 2x3 table
+easyham2.col &lt;- get.results(subset(class.df, Type == &quot;EASYHAM&quot;)$Class)
+hardham2.col &lt;- get.results(subset(class.df, Type == &quot;HARDHAM&quot;)$Class)
+spam2.col &lt;- get.results(subset(class.df, Type == &quot;SPAM&quot;)$Class)
+
+class.res &lt;- rbind(easyham2.col, hardham2.col, spam2.col)
+colnames(class.res) &lt;- c(&quot;NOT SPAM&quot;, &quot;SPAM&quot;)
+print(class.res)</code></pre>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数409，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

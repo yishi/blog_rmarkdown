@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2017-09-08" />
+
+<title>R包data.table备忘</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">R包data.table备忘</h1>
+<h4 class="author"></h4>
+<h4 class="date">2017-09-08</h4>
+
+</div>
+
+
+<p>当你的数据集有百万条，或600MB以上时，你需要data.table包协助，加速你的操作，data.table是data.frame的加强版。</p>
+<ol style="list-style-type: decimal">
+<li><p>读取文件，忘记<del>read.csv</del>， 使用<u>fread</u>吧，速度快，还有进度提醒。</p></li>
+<li><p>提取某些行的数据，忘记<del>vector scan</del>， 使用<u>binary search</u>吧，速度快。</p></li>
+</ol>
+<p><del><code>df[df$x == "R" &amp; df$y == "h", ])</code> # vector scan</del></p>
+<pre class="{r}"><code>dt = as.data.table(df)
+setkey(dt, x, y)
+# binary search
+dt[list(&quot;R&quot;, &quot;h&#39;)]          
+#or binary search
+dt[.(&quot;R&quot;, &quot;h&#39;)]             </code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>分组，并进行计算</li>
+</ol>
+<p><u>简单版本：</u></p>
+<pre class="{r}"><code>dt[, sum(v), by = x]  
+#或者
+dt[, sum(v), by = &quot;x, y&quot;]
+#      x        V1
+# 1： A       192214
+# 2： B        192183</code></pre>
+<p><u>复杂版本：</u></p>
+<pre class="{r}"><code>DT = as.data.table(iris)
+whatToRun = quote( .(AvgWidth = mean(Sepal.Width),
+                              MaxLength = max(Sepal.Length)) )
+DT[, eval_r(whatToRun), by=.(FirstLetter=substring(Species,1,1))]
+#    FirstLetter AvgWidth   MaxLength
+# 1: s             3.428        5.8
+# 2: v             2.872        7.9</code></pre>
+<p><u>进阶版本：</u></p>
+<pre class="{r}"><code>DT[x&gt;1000, sum(y*z), by=w]</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>取列</li>
+</ol>
+<pre class="{r}"><code>DT[, region]  
+#或者
+DT[, &quot;region&quot;, with = FALSE]  或者DT[[&quot;region&quot;]]
+# 取多个列
+DT[, c(1, 4, 10), with = FALSE]
+
+DT[, region]      #返回一个向量
+DT[, .(region)]   #返回一个 data.table</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>查询串联在一起</li>
+</ol>
+<p>These queries can be <strong>chained</strong> together just by adding another one on the end:</p>
+<pre class="{r}"><code>DT[...][...]
+# sum(v) by colA then return the 6 largest which are under 300
+DT[, sum(v), by = colA] [V1&lt;300] [tail(order(V1))]</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>添加、删除、更新某些列：=</li>
+</ol>
+<pre class="{r}"><code>DT[, V1 := round(exp(V1),2)]
+
+DT[, c(&quot;V1&quot;,&quot;V2&quot;) := list(round(exp(V1),2), LETTERS[4:6])] 
+#or
+DT[, &#39;:=&#39; (V1 =round(exp(V1),2),V2 = LETTERS[4:6])][]
+
+DT[, V1 := NULL] # 移除一列
+
+DT[, c(&quot;V1&quot;,&quot;V2&quot;) := NULL] # 移除多列
+
+Cols.chosen = c(&quot;V1&quot;,&quot;V2&quot;)
+
+DT[, Cols.chosen := NULL]
+
+#无显式的返回结果，列名为Cols.chosen的列将会被删除
+
+#删除指定变量Cols.chosen包含的V1列和V2列
+
+DT[, (Cols.chosen) := NULL]</code></pre>
+<ol start="7" style="list-style-type: decimal">
+<li>其他</li>
+</ol>
+<p><strong>.N</strong></p>
+<p>.N可以用来表示行的数量或者最后一行</p>
+<pre class="{r}"><code># 在i处使用：
+DT[.N-1]
+#    V1 V2      V3 V4
+# 1:  1  B -0.5765 11
+# 返回每一列的倒数第二行
+
+# 在j处使用：
+DT[,.N-1]
+# [1] 11
+# 返回倒数第二行所在的行数。</code></pre>
+<p><strong>by=.EACHI参数</strong></p>
+<p>by=.EACHI允许按每一个已知i的子集分组，在使用by=.EACHI时需要设置键值</p>
+<p>返回键值(V2列)中包含A或C的所有行中，V4列的总和。</p>
+<pre class="{r}"><code>DT[c(&quot;A&quot;,&quot;C&quot;), sum(V4)]
+# [1] 52
+# 返回键值所在列(V2列)中包含A的行在V4列总和与包含C的行在V4列的总和。
+
+DT[c(&quot;A&quot;,&quot;C&quot;), sum(V4), by=.EACHI]
+#   V2 V1
+# 1: A 22
+# 2: C 30</code></pre>
+<p><strong>.SD参数</strong></p>
+<p>.SD是一个data.table，他包含了各个分组，除了by中的变量的所有元素。.SD只能在位置j中使用：</p>
+<pre class="{r}"><code>DT[, print(.SD), by=V2]
+#    V1      V3 V4
+# 1:  1 -0.8313  1
+# 2:  2 -0.6264  4
+# 3:  1 -0.5765  7
+# 4:  2  0.7615 10
+#    V1      V3 V4
+# 1:  2  0.7615  2
+# 2:  1 -0.8313  5
+# 3:  2 -0.6264  8
+# 4:  1 -0.5765 11
+#    V1      V3 V4
+# 1:  1 -0.5765  3
+# 2:  2  0.7615  6
+# 3:  1 -0.8313  9
+# 4:  2 -0.6264 12
+# Empty data.table (0 rows) of 1 col: V2</code></pre>
+<p>以V2为分组，选择每组的第一和最后一行：</p>
+<pre class="{r}"><code>DT[,.SD[c(1,.N)], by=V2]
+#    V2 V1      V3 V4
+# 1:  A  1 -0.8313  1
+# 2:  A  2  0.7615 10
+# 3:  B  2  0.7615  2
+# 4:  B  1 -0.5765 11
+# 5:  C  1 -0.5765  3
+# 6:  C  2 -0.6264 12</code></pre>
+<p>以V2为分组，计算.SD中所有元素的和:</p>
+<pre class="{r}"><code>DT[, lapply(.SD, sum), by=V2]
+#    V2 V1      V3 V4
+# 1:  A  6 -1.2727 22
+# 2:  B  6 -1.2727 26
+# 3:  C  6 -1.2727 30</code></pre>
+<p><strong>.SDcols</strong></p>
+<p>.SDcols常于.SD用在一起，他可以指定.SD中所包含的列，也就是对.SD取子集：</p>
+<pre class="{r}"><code>DT[, lapply(.SD,sum), by=V2,
+   .SDcols = c(&quot;V3&quot;,&quot;V4&quot;)]
+#    V2      V3 V4
+# 1:  A -1.2727 22
+# 2:  B -1.2727 26
+# 3:  C -1.2727 30</code></pre>
+<p>.SDcols也可以是一个函数的返回值：</p>
+<pre class="{r}"><code>DT[, lapply(.SD,sum), by=V2,
+   .SDcols = paste0(&quot;V&quot;,3:4)]
+#    V2      V3 V4
+# 1:  A -1.2727 22
+# 2:  B -1.2727 26
+# 3:  C -1.2727 30</code></pre>
+<p>结果与上一个是相同的。</p>
+<p><strong>使用set()家族</strong></p>
+<p><strong>set()</strong></p>
+<p>set()通常用来更新给定的行和列的值，要注意的是，他不能跟by结合使用。</p>
+<pre class="{r}"><code>rows = list(3:4,5:6)
+cols = 1:2
+for (i in seq_along(rows))
+{ 
+set(DT,
+i=rows[[i]],
+j = cols[i],
+value = NA) 
+}
+
+DT
+ #    V1 V2      V3 V4
+ # 1:  1  A -0.0559  1
+ # 2:  2  B -0.4450  2
+ # 3: NA  C  0.0697  3
+ # 4: NA  A -0.1547  4
+ # 5:  1 NA -0.0559  5
+ # 6:  2 NA -0.4450  6
+ # 7:  1  A  0.0697  7
+ # 8:  2  B -0.1547  8</code></pre>
+<p>以上程序把给定的一组行和列都设置为了NA</p>
+<p><strong>setname()</strong></p>
+<p>与set()同理，setname()可以修改给定的列名和行名，以下程序是</p>
+<pre class="{r}"><code>#把名字为&quot;old&quot;的列，设置为&quot;new&quot;
+setnames(DT,&quot;old&quot;,&quot;new&quot;) 
+#把&quot;V2&quot;,&quot;V3&quot;列，设置为&quot;V2.rating&quot;,&quot;V3.DataCamp&quot;
+setnames(DT,c(&quot;V2&quot;,&quot;V3&quot;),c(&quot;V2.rating&quot;,&quot;V3.DataCamp&quot;))</code></pre>
+<p><strong>setcolorder()</strong></p>
+<p>setcolorder()可以用来修改列的顺序。</p>
+<pre class="{r}"><code>setcolorder(DT,c(&quot;V2&quot;,&quot;V1&quot;,&quot;V4&quot;,&quot;V3&quot;))
+#这段代码会使得列的顺序变成：
+# [1] &quot;V2&quot; &quot;V1&quot; &quot;V4&quot; &quot;V3&quot;</code></pre>
+<p><strong>参考</strong></p>
+<ul>
+<li>data.table包帮助文件中的10分钟快速入门和FAQ文档。</li>
+<li><a href="https://github.com/Rdatatable/data.table/wiki" class="uri">https://github.com/Rdatatable/data.table/wiki</a><br />
+</li>
+<li><a href="http://www.cnblogs.com/nxld/p/6059570.html" class="uri">http://www.cnblogs.com/nxld/p/6059570.html</a></li>
+</ul>
+<p><strong>推荐一个学习data.table的资源</strong></p>
+<ul>
+<li><a href="https://www.datacamp.com/courses/data-analysis-the-data-table-way" class="uri">https://www.datacamp.com/courses/data-analysis-the-data-table-way</a></li>
+</ul>
+<p><strong>再推荐一本关于R的新书</strong></p>
+<ul>
+<li>R for Data Science，网页版免费阅读。<a href="http://r4ds.had.co.nz/index.html" class="uri">http://r4ds.had.co.nz/index.html</a></li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数34，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

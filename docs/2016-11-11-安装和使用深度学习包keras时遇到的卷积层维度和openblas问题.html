@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2016-11-11" />
+
+<title>安装和使用深度学习包keras时遇到的卷积层维度和openblas问题</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">安装和使用深度学习包keras时遇到的卷积层维度和openblas问题</h1>
+<h4 class="author"></h4>
+<h4 class="date">2016-11-11</h4>
+
+</div>
+
+
+<p>我使用的是windows系统，安装的Anaconda，使用里面的Ipython notebook，已经默认安装了numpy, 使用theano为后端，在ipython notebook中安装theano和keras都很简单。</p>
+<pre class="{python}"><code>!pip install theano
+!pip install keras</code></pre>
+<p>但是，使用keras时发现两个小问题：</p>
+<ol style="list-style-type: decimal">
+<li><strong>卷积层输出的参数维度不对，后来发现，keras 默认使用TensorFlow为后端，需要修改配置文件参数</strong>。</li>
+</ol>
+<p>keras官方文档见https://keras.io/backend/ ，你可以在你的用户目录下找到.keras文件，如C:.keras，该文件需要修改两个地方，如下图所示：</p>
+<p><img src="images/2016-11-11-安装和使用深度学习包keras时遇到的卷积层维度和openblas问题-1.jpg" /></p>
+<p>官方文档中仅提示，修改”backend”，还要修改”image_dim_ordering”，不然卷积层的输出参数总是不对。</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>在使用函数model.fit时，会报错，说没有安装优化计算的包openblas</strong>，官方文档那里有很多方法，尝试了很久发现，对我都没用，最简单有效的方法就是，安装一个，其实还是很快的，也很有效。</li>
+</ol>
+<ul>
+<li><p>首先，去下载一个openblas，<a href="https://sourceforge.net/projects/openblas/files/" class="uri">https://sourceforge.net/projects/openblas/files/</a></p></li>
+<li><p>然后，把openblas的<strong>libopenblas.dll</strong>所在的文件夹加入到系统环境变量Path里。 如，我的在D:-v0.2.8-x86_64-Win，就把这个路径添加到环境变量中。</p></li>
+<li><p>最后，在配置文件.theanorc.txt里配置下，该配置文件在C:，如果没有，就新建一个，如下所示：</p></li>
+</ul>
+<p><img src="images/2016-11-11-安装和使用深度学习包keras时遇到的卷积层维度和openblas问题-2.jpg" /></p>
+<p>可以使用keras构建深度学习模型了！</p>
+<hr />
+<p><strong>2017年4月重装keras记录</strong></p>
+<p>主要遇到两个问题： + import theano 后，警告没有安装g++。 按照提示的安装一个软件后，import theano，直接报错，泪啊</p>
+<ul>
+<li>运行keras的示例代码，报错，没有blas加速包，各种失败，不知道上次怎么成功的，在.theanorc.text中设置optimizer = None，不加速，真的是相当相当慢，那个示例5万张图片，200个循环，10分钟貌似才训练了400张图片。</li>
+</ul>
+<p>在重复安装、尝试、卸载，纠结了几天，要放弃了，终于看到了一个靠谱的文章，<a href="http://blog.csdn.net/qq_30490125/article/details/49704159" class="uri">http://blog.csdn.net/qq_30490125/article/details/49704159</a> ，才知道估计我上次下载的anaconda老版本，自带MinGw， 即自动安装了g++。anaconda中也是自带blas加速的，因为numpy是依赖blas的，不过有时blas会没安装成功，numpy仍然可以安装，就是没用blas加速。</p>
+<ol style="list-style-type: decimal">
+<li><strong>安装anaconda，然后验证blas是否安装成功</strong>。</li>
+</ol>
+<pre class="{python}"><code>import numpy
+id(numpy.dot) == id(numpy.core.multiarray.dot)</code></pre>
+<p>如果返回false，恭喜你，已经安装了blas，如果是true，没安装blas，用的是python的实现，没有加速。</p>
+<p>简单处理：重装。</p>
+<p>我使用最新版的Anaconda2-4.3.1-Windows-x86_64安装，验证失败，我又下了个老版的Anaconda-2.2.0-Windows-x86_64安装，验证成功。</p>
+<ol start="2" style="list-style-type: decimal">
+<li>安装mingw</li>
+</ol>
+<p>听说anaconda 2.之前的版本是内置了mingw的（如果anaconda安装目录下有MinGW的目录）。</p>
+<p>我这里没内置，还是要装，我按照上面博客介绍的安装的，前几次也安装过，总是失败，这次上天眷顾，运气回升，安装成功，不过看着后面的一堆设置path，我也是醉了，一会设置系统变量中的path，一会设置用户变量中的path，以前的种种失败，估计就是因为以前看到的资料中没说清楚，我随便选一个设置的，还是上面博客中说的清楚啊，下面复制上面博客的，备份下。</p>
+<p>好多网上的教程都说自己去下载，然后手动安装。这个我不想谈（都是泪）</p>
+<p><strong>安装方法：</strong></p>
+<p>2.1 打开CMD（注意是windows命令提示符，并不是进入到python环境下，否则会提示语法错误，因为conda命令就是在windows下面执行的。）；</p>
+<p>2.2 输入conda install mingw libpython，然后回车，会出现安装进度，稍等片刻即可安装完毕。此时就有C:。</p>
+<p>2.3 然后你只需要在你的系统环境变量里面的path中加入 C:;C:_64-w64-mingw32。 可在windows命令行中输入g++ -v来查看是否安装成功：</p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>环境配置</strong></li>
+</ol>
+<p>3.1 编辑用户变量中的path变量，在后边追加C:;C:; 不要漏掉分号，此处需要根据自己的安装目录填写。</p>
+<p>3.2 在系统变量中新建变量PYTHONPATH，变量值为C:-packages; ，此处就是指明安装的theano的目录是哪，这里的theano我们会在后面安装，正常安装的默认路径就是这个。 3.3 打开cmd，会看到窗口里边有个路径，我的是C:&gt;，根据自己的路径，找到对应的目录，在该目录下新建一个文本文档.theanorc.txt （注意有两个“.”），编辑它，写入以下内容： &gt; [global]</p>
+<blockquote>
+<p>openmp=False</p>
+</blockquote>
+<blockquote>
+<p>[blas]</p>
+</blockquote>
+<blockquote>
+<p>ldflags=</p>
+</blockquote>
+<blockquote>
+<p>[gcc]</p>
+</blockquote>
+<blockquote>
+<p>cxxflags=-I*C:</p>
+</blockquote>
+<p>其中斜体字部分是你安装的Anaconda的路径，一定不要弄错。否则找不到MinGw。</p>
+<p>据说是要重启一下的，然而我懒，所以并没有。</p>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>安装theano</strong></li>
+</ol>
+<p>不需要手动下载zip等压缩包，直接用命令安装最简单。</p>
+<p>4.1 打开CMD，方法和安装MinGw一样，不要进入python。</p>
+<p>4.2 输入pip install theano，回车后就是赏心悦目的下载进度条，这个很小，所以安装的比较快。</p>
+<p>4.3 在cmd中，输入python 进入到python环境下，然后先输入import theano回车，需要等一段时间。</p>
+<p>然后什么也没有输出，没有报错。</p>
+<p>接下来不需要theano.test(),因为没有配置cuda，所以肯定会报错。</p>
+<p>不过这个时候，你可以去这个网址http://deeplearning.net/software/theano/tutorial/adding.html 如果到这里你都没有问题的话，这里的第一个小程序是肯定能跑起来的。</p>
+<p>备份完毕。</p>
+<p>建议详细参考原博文 <a href="http://blog.csdn.net/qq_30490125/article/details/49704159" class="uri">http://blog.csdn.net/qq_30490125/article/details/49704159</a></p>
+<p>原博文还有gpu的设置，我没有gpu啊，等有了再参考。</p>
+<p>十分感谢原博文的博主！</p>
+<p><strong>参考：</strong></p>
+<ul>
+<li><a href="http://blog.csdn.net/qq_30490125/article/details/49704159" class="uri">http://blog.csdn.net/qq_30490125/article/details/49704159</a></li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数1393，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

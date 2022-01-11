@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2018-03-16" />
+
+<title>小议数据分析</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="shortcut icon" href="favicon.ico" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Bei's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="https://github.com/yishi">GitHub</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">小议数据分析</h1>
+<h4 class="author"></h4>
+<h4 class="date">2018-03-16</h4>
+
+</div>
+
+
+<p>个人认为，数据分析目前有两个发展方向。</p>
+<ul>
+<li>一个是原来的统计分析，比如常见的统计学问题。</li>
+</ul>
+<p>课程改革前学生的数学平均成绩是65分，抽取15人接受课程改革，之后的数学平均分为75分，</p>
+<p>问：课改是否真的有效？使用单样本的t检验。这类问题还是有很强的生命力的。</p>
+<p>如药厂，研发的新药，就要随机抽样，问新药是否比现在的药物更有效？</p>
+<p>如互联网企业，改版后的页面是否比老页面更能吸引顾客？</p>
+<p>如农业，新种植方法是否比老种植方法更有效？</p>
+<p>这些主要讨论，采取某个策略后，是否有变化？是真实的改变，还是运气好？</p>
+<p>这些主要涉及统计检验，置信区间等等</p>
+<p>涉及的模型，以线性回归为主，使用的软件以SAS为主，尤其药厂，貌似美国药监局指定认可SAS的统计结果。</p>
+<ul>
+<li>另一个就是现在很火的数据挖掘，机器学习，高大上版本是深度学习。</li>
+</ul>
+<p>这些主要在有数据的前提下，砸各种模型，哪个准确率高，用哪个，当然，想要砸出一个准确率高的，也是需要各种知识和经验的，典型的就是kaggle竞赛，给你数据，大家比拼，谁的模型最好，最好的不仅有奖金，这个光环也是换工作的大杀器，现在的各种图片识别模型，还要比拼硬件，没GPU机器，不能跑神经网络模型啊。</p>
+<p>这些涉及对各种模型的了解，优缺点，适用场景等等。</p>
+<p>使用的软件以R和python为主。</p>
+<p><font face="微软雅黑" color=green size=5>附：线性回归模型整理</font></p>
+<p>系数估计方法：普通最小二乘法 ordinary least squares，即残差平方和最小。</p>
+<p>具体方法：对两个系数求导，令结果为0，推导出两个系数的数值。</p>
+<p><strong>回归模型的基本假定：</strong></p>
+<ul>
+<li><p>A0 模型设定假定（线性假定）。用散点图检查X和Y的关系</p></li>
+<li><p>A1 正交假定：</p>
+<ul>
+<li><p>误差项e和X不相关，两者的协方差=0；误差项的期望值为0。为了<strong>保证参数的估计是无偏的</strong>。</p></li>
+<li><p>如果忽略重要变量，<strong>忽略的变量与模型中的其他变量相关</strong>，被忽略的自变量成了误差项的一部分，违反该假定，<strong>估计值有偏</strong>。</p></li>
+<li><p>如果添加无关自变量，容易导致多重共线性。</p></li>
+</ul></li>
+<li><p>A2 独立同分布假定：误差项相互独立，且属于同一个分布。</p>
+<ul>
+<li><p>即：任何两个误差项之间的协方差为0；所有误差项的方差都相等。</p></li>
+<li><p>为了<strong>保证参数估计的有效性efficiency， 最有效的，即方差最小</strong>。</p></li>
+<li><p>方差不等，导致<strong>残差异方差问题</strong>。</p></li>
+</ul></li>
+<li><p>A3 正态分布假定。小样本时，假定误差项服从正态分布，才能使用t检验。</p></li>
+</ul>
+<p><strong>流程汇总：</strong></p>
+<ol style="list-style-type: decimal">
+<li>建立模型前，检验因变量是否符合正态分布，如果有偏，取对数。</li>
+<li>检查因变量和自变量之间是否存在线性关系。</li>
+<li>确定自变量</li>
+<li>检查误差项是否与自变量相关，如果相关，估计值有偏，有可能忽略重要变量，重新确定自变量。如果无关自变量x3与自变量x1、x2相关，导致回归系数（b1、b2）的标准误增大。 检查自变量之间是否存在多重共线性，如果存在，可能加入了不相关的变量，要么删除变量，要么增加样本容量，要么哪个变量vif大，中心化，要么用岭回归、lasso、主成分回归、偏最小二乘回归。</li>
+<li>自变量中是否需要交互项，如果交互项保留，对应的低次项也要保留，即使不显著。如果交互项与其低次项之间的共线性，对低次项先对中，再构造交互项。</li>
+<li>自变量中是否需要高次项，如果高次项保留，对应的低次项均保留，即使不显著。因为高次项导致的多重共线性，对二次多项式回归，用变量对中，二次以上用正交多项式解决。</li>
+<li>自变量中虚拟变量的处理，K个类别，只转换为K-1个变量，或转换为连续变量。</li>
+<li>建立模型后，检验误差项是否符合正态分布，用分位数-分位数图、残差-拟合值图。</li>
+<li>检验误差项是否方差齐性，如果不齐，存在异方差，转用广义最小二乘法、分层线性模型。</li>
+<li>检查R方，判断该直线与样本各观测点之间的接近程度，测量自变量X对因变量Y的解释程度。R方 = <font face="微软雅黑" color=blue size=3>相关系数的平方 = 回归平方和 / （回归平方和+残差平方和）</font>。</li>
+<li>检验回归系数，用t检验，不单看显著性水平0.05或0.01，也要检查标准误和t值。</li>
+<li>检验模型整体，用F检验。</li>
+<li>模型之间的比较，如果两者为嵌套模型，用F值，F&gt;临界值，模型整体存在显著的线性关系。<font face="微软雅黑" color=blue size=3>F = 回归均方MSR/残差均方MSE</font>。</li>
+</ol>
+<p><strong>常见问题1： 多重共线性</strong></p>
+<p>自变量共线性是指自变量之间存在线性相关，如果存在多个自变量线性相关，则称为多重共线性（multicolinearity）。</p>
+<p>判断是否存在严重近似共线性的原则：自变量中最大的方差膨胀因子大于10；平均方差膨胀因子明显大于1。</p>
+<ul>
+<li>问题：</li>
+</ul>
+<p><u>影响参数估计、扩大模型误差、破坏模型稳定性</u></p>
+<ul>
+<li><p>解决：</p>
+<ul>
+<li><p>删除不重要的共线性变量。<strong>一个重要的原则是不能忽略和X、Y都显著相关的变量（可以通过该变量加入模型与否会明显改善参数显著性检验来判断）</strong>。只有在该变量和X、Y无明显相关性时，我们才能考虑去掉这个变量。</p></li>
+<li><p>增加样本容量</p></li>
+<li><p>变量转换1）构造一个新变量，是多重共线性变量的函数，用新变量来替代那些具有多重共线性的旧变量，但新变量必须有意义</p></li>
+<li><p>变量转换2）把方程或方程中的几个变量，转换为一阶差分形式</p></li>
+<li><p>哪个变量VIF值大，就把它中心化</p></li>
+<li><p>因为高次项导致的多重共线性，对二次多项式回归，用变量对中，二次以上用正交多项式解决。</p></li>
+<li><p>如果交互项与其低次项之间的共线性，对低次项先对中，再构造交互项。</p></li>
+<li><p>岭回归ridge regression、lasso</p></li>
+<li><p>主成分回归principal component regression、</p></li>
+<li><p>偏最小二乘回归partial least square regression</p></li>
+</ul></li>
+</ul>
+<p><strong>常见问题2: 残差中的异方差性的分析和处理</strong></p>
+<ul>
+<li><p>问题：<u>影响参数估计，导致参数不是最有效的，即不是方差最小的。</u></p></li>
+<li><p>原因1：Y和X本身存在非线性关系；</p>
+<ul>
+<li>解决1：robust regression 或者局部加权 locally weighted 线性回归，用复杂的模型，欠拟合</li>
+</ul></li>
+<li><p>原因2：Y本身存在显著的自相关性；如：股票的波动率的聚合（volatility cluster）</p>
+<ul>
+<li>解决2：采用时间序列分析建模，对于波动率，我们有EWMA，ARCH和GARCH模型等进行建模和分析。</li>
+</ul></li>
+<li><p>原因3：残差中包含和因变量X线性相关，但未被模型考虑的变量，导致残差和X相关； 如果存在混淆变量，即和Y及X都显著相关的变量进入残差中，将会导致忽略变量偏差（omiited variable bias），造成系数和模型的估计有偏，模型的预测能力将会被大大影响。 混淆变量进入残差项中，通常是因为建模时对自变量共线性（colinearity）处理不当（因为共线性被删掉了）。</p>
+<ul>
+<li>解决3：增加被忽略的变量</li>
+</ul></li>
+<li><p>解决4：稳健回归（robust regression）和广义最小二乘法 (generalized least square)</p></li>
+</ul>
+<p>备注：转移自新浪博客，截至2021年11月，原阅读数110，评论0个。</p>
+
+
+  <!-- Link Gitalk 的支持文件  -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="md5.min.js"></script>
+<div id="gitalk-container"></div>     
+<script type="text/javascript">
+    const gitalk = new Gitalk({
+    // gitalk的主要参数
+		clientID: '132a6ad2a350dd61828f',
+		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
+		repo: 'blog_rmarkdown',
+		owner: 'yishi',
+		admin: ['yishi'],
+		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
+    distractionFreeMode: true  // Facebook-like distraction free mode
+    
+    });
+    gitalk.render('gitalk-container');
+</script> 
+<!-- Gitalk end -->
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
