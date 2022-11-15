@@ -8,6 +8,10 @@ tags:
   - life
 ---
 
+```{r, echo=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
 ```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(lubridate)
@@ -19,7 +23,7 @@ library(jiebaR)
 df <- read.csv('./data/book_list.csv')
 
 df_clean <- df %>% 
-  mutate(date = my(time)) %>% # for fill function work
+  mutate(date = ym(time)) %>% # for fill function work
   fill(date) %>% # fill blank
   select(-time) 
 
@@ -222,9 +226,19 @@ data.frame('word' = segment(df_g$book[(df_g$date > ymd('2019-12-30')) & (df_g$da
 data.frame('word' = segment(df_g$book[(df_g$date > ymd('2020-12-30')) & (df_g$date < ymd('2022-1-1'))], worker())) %>% 
   group_by(word) %>% 
   summarise(n = n()) %>% 
+  arrange(desc(n)) %>%
+  wordcloud2::wordcloud2() 
+```
+
+<div align='center' ><font size='60'>2022</font></div>
+```{r, echo=FALSE, screenshot.force= TRUE}
+data.frame('word' = segment(df_g$book[(df_g$date > ymd('2021-12-30')) & (df_g$date < ymd('2023-1-1'))], worker())) %>% 
+  group_by(word) %>% 
+  summarise(n = n()) %>% 
   arrange(desc(n)) %>% 
   wordcloud2::wordcloud2() 
 ```
+
 
 
 ```{r make_gplot, echo=FALSE, include=FALSE}
@@ -506,6 +520,20 @@ tb_c %>%
     theme(axis.text.x = element_text(size = rel(1.3), face = "bold")) +
     guides(color = 'none') +
     scale_x_date(date_labels = "%m", limits = c(ymd('2021-01-01'), '2021-12-31'), date_breaks = "1 month")
+
+### 2022 books
+df_g %>%      ### need renew
+  filter((date > ymd('2021-12-30')) & (date < ymd('2023-1-1'))) %>%     ### need renew
+  ggplot(aes(x = date, y = index, label = new_book, color = factor(date))) +
+  geom_text(size = 3, fontface = "bold") +
+  ylab('') +
+  xlab('') +
+  ggtitle('2022 books') +  ### need renew
+  theme(plot.title = element_text(hjust = 0.5, size = rel(2), face = "bold", color = 'darkgreen')) +
+  theme(axis.text.x = element_text(size = rel(1.3), face = "bold")) +
+  guides(color = 'none') +
+  scale_x_date(date_labels = "%m", limits = c(ymd('2021-12-15'), '2022-12-15'), date_breaks = "1 month") + ### need renew
+  scale_color_manual(values = c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#0072B2", "#CC79A7", "#E69F00", "#56B4E9", "#009E73", "#D55E00", "#0072B2", "#CC79A7"))
 
 ```
 
