@@ -2,6 +2,11 @@
 title: "Bei's blog"
 ---
 
+
+## 2023
+
+[2023-03-02 learning opencv python 1: bitwise operation](2023-03-02-learning-opencv-python-bitwise-operation.html)
+
 ## 2021
 
 [2021-12-23 dtplyr memo](2021-12-23-dtplyr-memo.html)
@@ -10,7 +15,7 @@ title: "Bei's blog"
 
 [* 2021-12-06 分分合合](2021-12-06-分分合合.html)
 
-[2021-10-14 dao de jing notes](2021-10-14-dao-de-jing-notes.html)
+[2021-10-14 道德真经注 宋 苏辙](2021-10-14-dao-de-jing-notes.html)
 
 ## 2019
 
