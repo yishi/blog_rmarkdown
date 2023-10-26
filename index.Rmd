@@ -5,6 +5,8 @@ title: "Bei's blog"
 
 ## 2023
 
+[2023-09-21 shanxi travel series 1: shanxi province museum](2023-09-21-shanxi_travel.html)
+
 [2023-03-02 learning opencv python 1: bitwise operation](2023-03-02-learning-opencv-python-bitwise-operation.html)
 
 ## 2021
