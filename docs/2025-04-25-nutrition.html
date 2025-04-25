@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>食物营养科普 - 健康生活每一天</title>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        },
+                        secondary: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        accent: {
+                            50: '#fff7ed',
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            --secondary-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            --accent-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            --protein-gradient: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            --carbs-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            --fat-gradient: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        .mega-text {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 900;
+            line-height: 1;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .mega-number {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        .en-text {
+            font-size: 0.875rem;
+            color: #64748b;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .bento-item {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .bento-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bento-item.primary {
+            border-top: 4px solid #0ea5e9;
+        }
+        
+        .bento-item.secondary {
+            border-top: 4px solid #22c55e;
+        }
+        
+        .bento-item.accent {
+            border-top: 4px solid #f97316;
+        }
+        
+        .bento-item.protein {
+            border-top: 4px solid #ef4444;
+        }
+        
+        .bento-item.carbs {
+            border-top: 4px solid #f59e0b;
+        }
+        
+        .bento-item.fat {
+            border-top: 4px solid #8b5cf6;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 1.5rem 0;
+        }
+        
+        .scroll-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .scroll-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nutrition-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .nutrition-icon.primary {
+            background: var(--primary-gradient);
+        }
+        
+        .nutrition-icon.secondary {
+            background: var(--secondary-gradient);
+        }
+        
+        .nutrition-icon.accent {
+            background: var(--accent-gradient);
+        }
+        
+        .nutrition-icon.protein {
+            background: var(--protein-gradient);
+        }
+        
+        .nutrition-icon.carbs {
+            background: var(--carbs-gradient);
+        }
+        
+        .nutrition-icon.fat {
+            background: var(--fat-gradient);
+        }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 80%;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            z-index: 1000;
+        }
+        
+        @media (min-width: 768px) {
+            .bento-grid.featured {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(2, auto);
+            }
+            
+            .bento-grid.featured .bento-item:first-child {
+                grid-column: span 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 进度条 -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="sticky-nav py-4 mb-8">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold text-primary-600">食物营养科普</div>
+                <div class="hidden md:flex space-x-4">
+                    <a href="#intro" class="nav-link">引言</a>
+                    <a href="#grains" class="nav-link">谷物</a>
+                    <a href="#vegetables" class="nav-link">蔬菜</a>
+                    <a href="#proteins" class="nav-link">蛋白质</a>
+                    <a href="#combinations" class="nav-link">食物组合</a>
+                    <a href="#tips" class="nav-link">健康建议</a>
+                    <a href="食物营养搭配科普报告_.pdf" class="nav-link flex items-center" download>
+                        <i class="fas fa-file-pdf text-accent-500 mr-1"></i> 下载PDF
+                    </a>
+                </div>
+                <button class="md:hidden text-primary-600" id="mobileMenuButton">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 移动端菜单 -->
+    <div class="fixed inset-0 bg-white z-50 transform translate-x-full transition-transform duration-300 md:hidden" id="mobileMenu">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-end mb-8">
+                <button id="closeMenuButton">
+                    <i class="fas fa-times text-2xl text-primary-600"></i>
+                </button>
+            </div>
+            <div class="flex flex-col space-y-6">
+                <a href="#intro" class="text-xl font-bold">引言</a>
+                <a href="#grains" class="text-xl font-bold">谷物</a>
+                <a href="#vegetables" class="text-xl font-bold">蔬菜</a>
+                <a href="#proteins" class="text-xl font-bold">蛋白质</a>
+                <a href="#combinations" class="text-xl font-bold">食物组合</a>
+                <a href="#tips" class="text-xl font-bold">健康建议</a>
+                <a href="食物营养搭配科普报告_.pdf" class="text-xl font-bold flex items-center" download>
+                    <i class="fas fa-file-pdf text-accent-500 mr-2"></i> 下载PDF
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 头部横幅 -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary-700/80 to-secondary-600/80 z-10"></div>
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&q=80&w=1932&ixlib=rb-4.0.3" alt="健康食物背景" class="w-full h-full object-cover">
+        </div>
+        <div class="container mx-auto px-4 text-center relative z-20">
+            <h1 class="mega-text text-white mb-4" style="-webkit-text-fill-color: white;">食物营养科普</h1>
+            <p class="text-white/90 text-xl mb-8">科学搭配食物，健康生活每一天</p>
+            <p class="en-text text-white/80">NUTRITION SCIENCE REPORT</p>
+            <div class="mt-12">
+                <a href="#intro" class="inline-block bg-white text-primary-600 px-8 py-3 rounded-full font-bold hover:bg-primary-50 transition-colors">
+                    开始探索 <i class="fas fa-arrow-down ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 引言部分 -->
+    <section id="intro" class="py-20 scroll-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="nutrition-icon primary mx-auto">
+                    <i class="fas fa-apple-alt text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-bold mb-6">均衡营养的重要性</h2>
+                <p class="text-gray-600 text-lg mb-4">
+                    均衡的营养是维持身体健康和预防疾病的基础。通过科学搭配食物，我们可以获取身体所需的各种营养素，提高生活质量，延长健康寿命。
+                </p>
+                <p class="en-text">BALANCED NUTRITION</p>
+            </div>
+            
+            <div class="bento-grid featured">
+                <div class="bento-item primary">
+                    <h3 class="text-2xl font-bold mb-4">营养素的基本分类</h3>
+                    <div class="grid md:grid-cols-3 gap-6 mt-8">
+                        <div class="text-center">
+                            <div class="mega-number" style="background: var(--protein-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">蛋白质</div>
+                            <p class="en-text">PROTEIN</p>
+                            <p class="mt-2 text-gray-600">构建和修复身体组织的基础</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="mega-number" style="background: var(--carbs-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">碳水</div>
+                            <p class="en-text">CARBOHYDRATES</p>
+                            <p class="mt-2 text-gray-600">提供能量的主要来源</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="mega-number" style="background: var(--fat-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">脂肪</div>
+                            <p class="en-text">FAT</p>
+                            <p class="mt-2 text-gray-600">储存能量和保护器官</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bento-item secondary">
+                    <div class="nutrition-icon secondary">
+                        <i class="fas fa-seedling text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">微量营养素</h3>
+                    <p class="text-gray-600 mb-4">
+                        维生素和矿物质虽然需求量小，但对身体功能至关重要，缺乏可能导致多种健康问题。
+                    </p>
+                    <p class="en-text">MICRONUTRIENTS</p>
+                </div>
+                
+                <div class="bento-item accent">
+                    <div class="nutrition-icon accent">
+                        <i class="fas fa-tint text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">水分与膳食纤维</h3>
+                    <p class="text-gray-600 mb-4">
+                        水是生命之源，而膳食纤维有助于消化系统健康，两者都是均衡饮食的重要组成部分。
+                    </p>
+                    <p class="en-text">WATER & FIBER</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 谷物部分 -->
+    <section id="grains" class="py-20 bg-gray-50 scroll-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="nutrition-icon carbs mx-auto">
+                    <i class="fas fa-wheat text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-bold mb-6">谷物营养解析</h2>
+                <p class="text-gray-600 text-lg mb-4">
+                    谷物是人类饮食的主要能量来源，不同种类的谷物提供不同的营养价值，了解它们的区别对健康饮食至关重要。
+                </p>
+                <p class="en-text">GRAIN NUTRITION</p>
+            </div>
+            
+            <div class="bento-grid">
+                <div class="bento-item carbs">
+                    <h3 class="text-2xl font-bold mb-4">细粮与粗粮对比</h3>
+                    <div class="chart-container">
+                        <canvas id="grainsChart"></canvas>
+                    </div>
+                    <p class="text-gray-600 mt-4">
+                        粗粮保留了更多的营养成分和膳食纤维，而精制谷物虽然口感更佳，但营养价值较低。
+                    </p>
+                </div>
+                
+                <div class="bento-item">
+                    <div class="flex items-start mb-6">
+                        <div class="mr-4 mt-1">
+                            <i class="fas fa-check-circle text-2xl text-green-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">全谷物的健康益处</h4>
+                            <p class="text-gray-600">
+                                全谷物富含膳食纤维、B族维生素和多种矿物质，有助于降低心脏病、糖尿病和某些癌症的风险。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="mr-4 mt-1">
+                            <i class="fas fa-lightbulb text-2xl text-yellow-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">如何增加全谷物摄入</h4>
+                            <ul class="text-gray-600 list-disc pl-5 space-y-2">
+                                <li>选择全麦面包而非白面包</li>
+                                <li>尝试糙米、藜麦、燕麦等全谷物</li>
+                                <li>阅读食品标签，寻找"全谷物"标识</li>
+                                <li>逐渐增加全谷物比例，适应其口感</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-4">不同谷物的营养特点</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-yellow-50 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">燕麦</h4>
+                            <p class="text-gray-600">富含β-葡聚糖，有助于降低胆固醇，是早餐的理想选择</p>
+                        </div>
+                        
+                        <div class="p-4 bg-red-50 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">藜麦</h4>
+                            <p class="text-gray-600">含有全部九种必需氨基酸的完全蛋白质，适合素食者食用</p>
+                        </div>
+                        
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">糙米</h4>
+                            <p class="text-gray-600">保留了胚芽和麸皮，富含维生素B和矿物质，有助于稳定血糖</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 蔬菜部分 -->
+    <section id="vegetables" class="py-20 scroll-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="nutrition-icon secondary mx-auto">
+                    <i class="fas fa-carrot text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-bold mb-6">蔬菜的营养价值</h2>
+                <p class="text-gray-600 text-lg mb-4">
+                    蔬菜是维生素、矿物质和抗氧化物的重要来源，不同颜色的蔬菜提供不同的营养素和健康益处。
+                </p>
+                <p class="en-text">VEGETABLE NUTRITION</p>
+            </div>
+            
+            <div class="bento-grid">
+                <div class="bento-item secondary">
+                    <h3 class="text-2xl font-bold mb-4">彩虹蔬菜的营养特点</h3>
+                    <div class="chart-container">
+                        <canvas id="vegetablesChart"></canvas>
+                    </div>
+                    <p class="text-gray-600 mt-4">
+                        "吃彩虹"是一种简单而有效的方法，确保获取多种营养素和植物化合物。
+                    </p>
+                </div>
+                
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-4">蔬菜的最佳烹饪方式</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="mr-4 mt-1 text-green-500">
+                                <i class="fas fa-utensils text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">蒸煮</h4>
+                                <p class="text-sm text-gray-600">保留大部分水溶性维生素，避免添加额外油脂</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="mr-4 mt-1 text-orange-500">
+                                <i class="fas fa-fire text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">快炒</h4>
+                                <p class="text-sm text-gray-600">短时间高温烹饪，保留口感和大部分营养</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="mr-4 mt-1 text-blue-500">
+                                <i class="fas fa-snowflake text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">生食</h4>
+                                <p class="text-sm text-gray-600">最大程度保留营养和酶，但部分蔬菜需要烹饪以提高营养吸收率</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="mr-4 mt-1 text-red-500">
+                                <i class="fas fa-exclamation-triangle text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">避免长时间煮沸</h4>
+                                <p class="text-sm text-gray-600">会导致水溶性维生素流失，降低营养价值</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-4">每日蔬菜摄入建议</h3>
+                    <div class="relative">
+                        <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-green-500 to-green-300 rounded-full" style="width: 75%"></div>
+                        </div>
+                        <div class="absolute -top-2 left-3/4 transform -translate-x-1/2">
+                            <div class="bg-white border border-gray-300 rounded-full w-8 h-8 flex items-center justify-center shadow-md">
+                                <span class="text-sm font-bold">75%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center mt-8 text-gray-600">
+                        建议每日摄入300-500克蔬菜，占餐盘的一半以上
+                    </p>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-600">深色蔬菜</span>
+                            <span class="text-sm font-bold">≥ 50%</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-green-600 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-600">浅色蔬菜</span>
+                            <span class="text-sm font-bold">≤ 50%</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-green-300 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 蛋白质部分 -->
+    <section id="proteins" class="py-20 bg-gray-50 scroll-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="nutrition-icon protein mx-auto">
+                    <i class="fas fa-drumstick-bite text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-bold mb-6">蛋白质食物选择</h2>
+                <p class="text-gray-600 text-lg mb-4">
+                    蛋白质是构建和修复身体组织的基础，选择优质蛋白质来源对健康至关重要。
+                </p>
+                <p class="en-text">PROTEIN SOURCES</p>
+            </div>
+            
+            <div class="bento-grid">
+                <div class="bento-item protein">
+                    <h3 class="text-2xl font-bold mb-4">动物蛋白与植物蛋白</h3>
+                    <div class="chart-container">
+                        <canvas id="proteinsChart"></canvas>
+                    </div>
+                    <p class="text-gray-600 mt-4">
+                        动物蛋白和植物蛋白各有优势，平衡摄入两种来源的蛋白质有助于获取全面的氨基酸。
+                    </p>
+                </div>
+                
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-4">优质蛋白质来源</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-3 bg-red-50 rounded-lg">
+                            <h4 class="font-bold mb-2">动物来源</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5 space-y-1">
+                                <li>鱼类（三文鱼、金枪鱼）</li>
+                                <li>禽类（鸡胸肉、火鸡）</li>
+                                <li>瘦肉（牛肉、猪肉）</li>
+                                <li>蛋类</li>
+                                <li>低脂奶制品</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="p-3 bg-green-50 rounded-lg">
+                            <h4 class="font-bold mb-2">植物来源</h4>
+                            <ul class="text-sm text-gray-600 list-disc pl-5 space-y-1">
+                                <li>豆类（黄豆、黑豆）</li>
+                                <li>豆制品（豆腐、豆浆）</li>
+                                <li>坚果和种子</li>
+                                <li>全谷物</li>
+                                <li>藜麦</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bento-item">
+                    <div class="flex items-start mb-6">
+                        <div class="mr-4 mt-1">
+                            <i class="fas fa-info-circle text-2xl text-blue-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">蛋白质摄入建议</h4>
+                            <p class="text-gray-600">
+                                成年人每天每公斤体重需要约0.8克蛋白质，运动员和老年人可能需要更多。均衡摄入不同来源的蛋白质，避免过度依赖单一来源。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="mr-4 mt-1">
+                            <i class="fas fa-exclamation-triangle text-2xl text-yellow-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2">注意事项</h4>
+                            <p class="text-gray-600">
+                                过量摄入动物蛋白可能增加心血管疾病风险，选择瘦肉和低脂奶制品，并增加植物蛋白的比例。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 食物组合部分 -->
+    <section id="combinations" class="py-20 scroll-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="nutrition-icon accent mx-auto">
+                    <i class="fas fa-utensils text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-bold mb-6">食物组合的科学</h2>
+                <p class="text-gray-600 text-lg mb-4">
+                    合理的食物组合可以提高营养素的吸收率，增强食物的健康效益，创造更均衡的饮食结构。
+                </p>
+                <p class="en-text">FOOD COMBINATIONS</p>
+            </div>
+            
+            <div class="bento-grid">
+                <div class="bento-item accent">
+                    <h3 class="text-2xl font-bold mb-4">营养互补组合</h3>
+                    <div class="chart-container">
+                        <canvas id="combinationsChart"></canvas>
+                    </div>
+                    <p class="text-gray-600 mt-4">
+                        不同食物组合的营养互补效果，科学搭配可以获得1+1>2的健康效益。
+                    </p>
+                </div>
+                
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-4">黄金搭配组合</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-yellow-50 rounded-lg">
+                            <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-plus text-yellow-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">番茄 + 橄榄油</h4>
+                                <p class="text-sm text-gray-600">脂溶性番茄红素需要油脂帮助吸收</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-plus text-green-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">绿茶 + 柠檬</h4>
+                                <p class="text-sm text-gray-600">维生素C提高茶多酚的吸收率</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-red-50 rounded-lg">
+                            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-plus text-red-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">豆类 + 全谷物</h4>
+                                <p class="text-sm text-gray-600">形成完整的蛋白质氨基酸谱</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-4">避免的组合</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="mr-4 mt-1">
+                                <i class="fas fa-times-circle text-2xl text-red-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2">茶与铁质食物</h4>
+                                <p class="text-gray-600">
+                                    茶中的单宁酸会阻碍铁的吸收，饭后至少1小时再饮茶。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="mr-4 mt-1">
+                                <i class="fas fa-times-circle text-2xl text-red-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2">牛奶与某些水果</h4>
+                                <p class="text-gray-600">
+                                    牛奶与某些酸性水果同食可能导致蛋白质凝固，影响消化。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 下载PDF部分 -->
+    <section class="py-16 bg-primary-50 text-center">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-6">获取完整营养科普报告</h2>
+            <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+                想了解更多关于食物营养搭配的详细信息？下载我们的完整PDF报告，随时随地学习健康饮食知识！
+            </p>
+            <a href="食物营养搭配科普报告_.pdf" class="inline-flex items-center px-8 py-4 bg-accent-500 text-white rounded-full font-bold hover:bg-accent-600 transition-colors" download>
+                <i class="fas fa-file-pdf mr-2 text-xl"></i>
+                下载完整PDF报告
+            </a>
+        </div>
+    </section>
+    
+    <!-- 健康建议部分 -->
+    <section id="tips" class="py-20 bg-gray-50 scroll-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="nutrition-icon primary mx-auto">
+                    <i class="fas fa-heart text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-bold mb-6">健康饮食建议</h2>
+                <p class="text-gray-600 text-lg mb-4">
+                    将营养知识转化为日常饮食习惯，通过简单的原则指导健康生活方式。
+                </p>
+                <p class="en-text">HEALTHY EATING TIPS</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bento-item">
+                    <h3 class="text-2xl font-bold mb-6">饮食平衡原则</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-primary-600 font-bold">1</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">多样化饮食</h4>
+                                <p class="text-gray-600">
+                                    每天摄入不同种类的食物，确保获取全面的营养素。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-primary-600 font-bold">2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">控制份量</h4>
+                                <p class="text-gray-600">
+                                    注意食物的份量，避免过量进食，保持能量平衡。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-primary-600 font-bold">3</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">减少加工食品</h4>
+                                <p class="text-gray-600">
+                                    选择天然、未加工或少加工的食物，减少添加糖和盐的摄入。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-primary-600 font-bold">4</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">规律进餐</h4>
+                                <p class="text-gray-600">
+                                    保持规律的进餐时间，避免长时间不进食后暴饮暴食。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bento-item"> 
+                    <h3 class="text-2xl font-bold mb-6">健康饮食金字塔</h3> 
+                    <div class="relative h-80 flex flex-col-reverse"> 
+                        <!-- 底层：全谷物、薯类 -->
+                        <div class="h-1/5 flex items-center justify-center mx-auto" style="width: 100%; background-color: rgba(245, 158, 11, 0.4);">
+                            <p class="font-bold">全谷物、薯类</p> 
+                        </div>
+                        <!-- 第二层：蔬菜、水果 -->
+                        <div class="h-1/5 flex items-center justify-center mx-auto" style="width: 80%; background-color: rgba(34, 197, 94, 0.4);">
+                            <p class="font-bold">蔬菜、水果</p> 
+                        </div>
+                        <!-- 第三层：蛋白质食物 -->
+                        <div class="h-1/5 flex items-center justify-center mx-auto" style="width: 60%; background-color: rgba(239, 68, 68, 0.4);">
+                            <p class="font-bold">蛋白质食物</p> 
+                        </div>
+                        <!-- 第四层：奶制品 -->
+                        <div class="h-1/5 flex items-center justify-center mx-auto" style="width: 40%; background-color: rgba(139, 92, 246, 0.4);">
+                            <p class="font-bold">奶制品</p> 
+                        </div>
+                        <!-- 顶层：油脂、糖 -->
+                        <div class="h-1/5 flex items-center justify-center mx-auto" style="width: 20%; background-color: rgba(249, 115, 22, 0.4);">
+                            <p class="font-bold">油脂、糖</p> 
+                        </div>
+                    </div> 
+                    <p class="text-center text-gray-600 mt-4"> 
+                        金字塔底部的食物应该是日常饮食的主体，顶部的食物应该适量摄入。 
+                    </p> 
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">食物营养科普</h3>
+                    <p class="text-gray-400">科学搭配食物，健康生活每一天</p>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <a href="mailto:kong_026@163.com" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-envelope text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <hr class="border-gray-700 my-8">
+            
+            <div class="text-center text-gray-400">
+                <p>© 2025 食物营养科普 版权所有</p>
+                <p class="mt-2">本文仅供参考，具体饮食建议请咨询专业营养师</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript代码 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 滚动动画
+            const scrollSections = document.querySelectorAll('.scroll-section');
+            
+            function isElementInViewport(el) {
+                const rect = el.getBoundingClientRect();
+                return (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.75
+                );
+            }
+            
+            function handleScrollAnimation() {
+                scrollSections.forEach(section => {
+                    if (isElementInViewport(section)) {
+                        section.classList.add('visible');
+                    }
+                });
+            }
+            
+            // 初始检查
+            handleScrollAnimation();
+            
+            // 滚动时检查
+            window.addEventListener('scroll', handleScrollAnimation);
+            
+            // 进度条
+            function updateProgressBar() {
+                const scrollTop = window.scrollY;
+                const docHeight = document.body.offsetHeight;
+                const winHeight = window.innerHeight;
+                const scrollPercent = scrollTop / (docHeight - winHeight);
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = scrollPercent * 100 + '%';
+            }
+            
+            window.addEventListener('scroll', updateProgressBar);
+            updateProgressBar();
+            
+            // 导航链接高亮
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            function highlightNavLink() {
+                let index = sections.length;
+                
+                while(--index && window.scrollY + 100 < sections[index].offsetTop) {}
+                
+                navLinks.forEach(link => link.classList.remove('active'));
+                navLinks[index].classList.add('active');
+            }
+            
+            window.addEventListener('scroll', highlightNavLink);
+            highlightNavLink();
+            
+            // 移动端菜单
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const closeMenuButton = document.getElementById('closeMenuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+            
+            closeMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.add('translate-x-full');
+            });
+            
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            });
+            
+            // 图表初始化
+            // 谷物营养对比图表
+            const grainsCtx = document.getElementById('grainsChart').getContext('2d');
+            const grainsChart = new Chart(grainsCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['膳食纤维', '维生素B', '矿物质', '抗氧化物', '蛋白质', '碳水化合物'],
+                    datasets: [
+                        {
+                            label: '全谷物',
+                            data: [85, 70, 75, 80, 65, 60],
+                            backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                            borderColor: 'rgba(245, 158, 11, 1)',
+                            pointBackgroundColor: 'rgba(245, 158, 11, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(245, 158, 11, 1)'
+                        },
+                        {
+                            label: '精制谷物',
+                            data: [20, 30, 25, 15, 40, 90],
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+            
+            // 蔬菜营养对比图表
+            const vegetablesCtx = document.getElementById('vegetablesChart').getContext('2d');
+            const vegetablesChart = new Chart(vegetablesCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['绿色蔬菜', '红色蔬菜', '黄色蔬菜', '紫色蔬菜', '白色蔬菜'],
+                    datasets: [
+                        {
+                            label: '维生素A',
+                            data: [70, 85, 90, 40, 20],
+                            backgroundColor: 'rgba(34, 197, 94, 0.7)'
+                        },
+                        {
+                            label: '维生素C',
+                            data: [60, 75, 50, 65, 45],
+                            backgroundColor: 'rgba(249, 115, 22, 0.7)'
+                        },
+                        {
+                            label: '抗氧化物',
+                            data: [80, 90, 70, 95, 40],
+                            backgroundColor: 'rgba(14, 165, 233, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: false,
+                        },
+                        y: {
+                            stacked: false,
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // 蛋白质图表
+            const proteinsCtx = document.getElementById('proteinsChart').getContext('2d');
+            const proteinsChart = new Chart(proteinsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['动物蛋白', '植物蛋白'],
+                    datasets: [{
+                        data: [55, 45],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(34, 197, 94, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(34, 197, 94, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // 食物组合图表
+            const combinationsCtx = document.getElementById('combinationsChart').getContext('2d');
+            const combinationsChart = new Chart(combinationsCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['蛋白质+碳水', '蛋白质+脂肪', '碳水+脂肪', '均衡配比'],
+                    datasets: [{
+                        data: [70, 65, 60, 90],
+                        backgroundColor: [
+                            'rgba(14, 165, 233, 0.7)',
+                            'rgba(249, 115, 22, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(34, 197, 94, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+</body>
+</html>
