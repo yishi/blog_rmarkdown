@@ -11,7 +11,7 @@
 
 
 
-<title>Bei’s blog</title>
+<title>Bei's blog</title>
 
 <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -54,6 +54,154 @@ if (window.hljs) {
   }
 }
 </script>
+
+<!-- 新增自定义样式 -->
+<style type="text/css">
+  /* 页面背景和整体样式 */
+  body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  /* 顶部背景图片区域 */
+  .hero-header {
+    background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    position: relative;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  .hero-subtitle {
+    font-size: 20px;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  }
+  
+  /* 年份分类样式 */
+  .year-section {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .year-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .year-section h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+  
+  /* 文章链接样式 */
+  .post-link {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: #444;
+    background-color: #f8f9fa;
+    border-radius: 3px;
+  }
+  
+  .post-link:hover {
+    border-left-color: #3498db;
+    background-color: #eef2f7;
+    text-decoration: none;
+    color: #3498db;
+    padding-left: 20px;
+  }
+  
+  .post-link .post-date {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  
+  .post-link .post-title {
+    font-weight: 500;
+  }
+  
+  /* 导航栏样式优化 */
+  .navbar-default {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .navbar-default .navbar-brand,
+  .navbar-default .navbar-nav > li > a {
+    color: white;
+  }
+  
+  .navbar-default .navbar-brand:hover,
+  .navbar-default .navbar-nav > li > a:hover {
+    color: #3498db;
+  }
+  
+  /* 页脚样式 */
+  .footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 30px;
+    color: #7f8c8d;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+  }
+  
+  /* 特殊标记文章 */
+  .featured-post {
+    position: relative;
+  }
+  
+  .featured-post::after {
+    content: "★";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #f39c12;
+    font-size: 18px;
+  }
+</style>
 
 
 
@@ -261,383 +409,567 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div id="header">
-
-
-
-<h1 class="title toc-ignore">Bei’s blog</h1>
-
+<!-- 新增顶部背景图片区域 -->
+<div class="hero-header">
+  <div class="hero-overlay">
+    <h1 class="hero-title">Bei's Blog</h1>
+    <p class="hero-subtitle">数据科学、机器学习、旅行记录与生活感悟</p>
+  </div>
 </div>
 
+<div class="container">
+  <!-- 2025年文章 -->
+  <div class="year-section">
+    <h2>2025</h2>
+    <a href="2025-04-25-nutrition.html" class="post-link">
+      <span class="post-date">2025-04-25</span>
+      <span class="post-title">食物营养科普</span>
+    </a>
+    <a href="https://yishi.github.io/analysis_open_data/electric_vehicle_population_data_analysis.html" class="post-link">
+      <span class="post-date">2025-03-14</span>
+      <span class="post-title">美国电动车数据分析</span>
+    </a>
+  </div>
 
-<div id="section-0" class="section level2">
-<h2>2025</h2>
-<p><a href="2025-04-25-nutrition.html">2025-04-25 食物营养科普</a></p>
-<p><a href="https://yishi.github.io/analysis_open_data/electric_vehicle_population_data_analysis.html">2025-03-14 美国电动车数据分析</a></p>
-</div>
-<div id="section-1" class="section level2">
-<h2>2023</h2>
-<p><a href="2023-10-26-shanxi-travel-4.html">2023-10-26 山西游记之平遥古城</a></p>
-<p><a href="2023-10-26-shanxi-travel-3.html">2023-10-26 山西游记之双林寺</a></p>
-<p><a href="2023-10-26-shanxi-travel-2.html">2023-10-26 山西游记之晋祠</a></p>
-<p><a href="2023-09-21-shanxi_travel.html">2023-09-21 山西游记之山西省博物馆</a></p>
-<p><a
-href="2023-03-02-learning-opencv-python-bitwise-operation.html">2023-03-02
-learning opencv python 1: bitwise operation</a></p>
-</div>
-<div id="section-1" class="section level2">
-<h2>2021</h2>
-<p><a href="2021-12-23-dtplyr-memo.html">2021-12-23 dtplyr memo</a></p>
-<p><a href="2021-12-13-booklist.html">* 2021-12-13 booklist</a></p>
-<p><a href="2021-12-06-分分合合.html">* 2021-12-06 分分合合</a></p>
-<p><a href="2021-10-14-dao-de-jing-notes.html">2021-10-14 道德真经注 宋
-苏辙</a></p>
-</div>
-<div id="section-2" class="section level2">
-<h2>2019</h2>
-<p><a href="2019-03-07-用blogdown和gitalk搭建个人网站.html">* 2019-03-07
-用blogdown和gitalk搭建个人网站</a></p>
-</div>
-<div id="section-3" class="section level2">
-<h2>2018</h2>
-<p><a
-href="2018-09-18-信息爆炸-见多识广-与-孤陋寡闻-在模型变量上的体现.html">2018-09-18
-信息爆炸 见多识广 与 孤陋寡闻 在模型变量上的体现</a></p>
-<p><a href="2018-04-18-转载-机器学习是什么-周志华.html">2018-04-18 转载
-机器学习是什么 周志华</a></p>
-<p><a href="2018-03-16-小议数据分析.html">* 2018-03-16
-小议数据分析</a></p>
-</div>
-<div id="section-4" class="section level2">
-<h2>2017</h2>
-<p><a
-href="2017-12-01-map-function-replace-apply-family-in-base-r.html">2017-12-01
-map function replace apply family in base r</a></p>
-<p><a
-href="2017-11-22-good-book-recommendation-r-for-data-science.html">2017-11-22
-good book recommendation r for data science</a></p>
-<p><a href="2017-09-22-r-包-dplyr-备忘.html">2017-09-22 r 包 dplyr
-备忘</a></p>
-<p><a
-href="2017-09-14-data-visualization-series-iv-create-interactive-map-in-r.html">2017-09-14
-data visualization series iv create interactive map in r</a></p>
-<p><a href="2017-09-08-r包data-table备忘.html">2017-09-08 r包data
-table备忘</a></p>
-<p><a href="2017-09-05-kaggle-竞赛有感4.html">* 2017-09-05 kaggle
-竞赛有感4</a></p>
-<p><a href="2017-09-04-使用r语言制作具有交互效果的词云.html">2017-09-04
-使用r语言制作具有交互效果的词云</a></p>
-<p><a href="2017-08-15-kaggle-竞赛有感3小议集成模型.html">2017-08-15
-kaggle 竞赛有感3小议集成模型</a></p>
-<p><a href="2017-07-31-kaggle-竞赛有感2.html">2017-07-31 kaggle
-竞赛有感2</a></p>
-<p><a
-href="2017-07-21-kaggle-竞赛有感之小议模型训练的欠拟合与过拟合.html">2017-07-21
-kaggle 竞赛有感之小议模型训练的欠拟合与过拟合</a></p>
-<p><a href="2017-07-11-kaggle-competition-series-1-2.html">2017-07-11
-kaggle competition series 1 2</a></p>
-<p><a href="2017-06-06-r的shiny中的分级菜单.html">2017-06-06
-r的shiny中的分级菜单</a></p>
-<p><a href="2017-05-10-deep-learning-series-8-10.html">2017-05-10 deep
-learning series 8 10</a></p>
-<p><a
-href="2017-05-08-deep-learning-series-7-text-document-classification-using-20-newsgroups-dataset.html">2017-05-09
-deep learning series 7 text document classification using 20 newsgroups
-dataset</a></p>
-<p><a
-href="2017-05-08-python-tips-2-使用reload-sys-后-再使用print语句无输出.html">2017-05-08
-python tips 2 使用reload sys 后 再使用print语句无输出</a></p>
-<p><a
-href="2017-05-07-python-tips-1-unicodeencodeerror-ascii-codec-can-03.html">2017-05-07
-python tips 1 unicodeencodeerror ascii codec can 03</a></p>
-<p><a href="2017-02-08-computer-vision-series-1-2.html">2017-02-08
-computer vision series 1 2</a></p>
-<p><a
-href="2017-01-07-text-mining-series-3-automatic-summarization.html">2017-01-07
-text mining series 3 automatic summarization</a></p>
-<p><a
-href="2017-01-07-text-mining-series-2-make-a-spell-correct.html">2017-01-07
-text mining series 2 make a spell correct</a></p>
-</div>
-<div id="section-5" class="section level2">
-<h2>2016</h2>
-<p><a
-href="2016-12-27-text-mining-series-1-sentiment-analysis.html">2016-12-27
-text mining series 1 sentiment analysis</a></p>
-<p><a
-href="2016-12-15-转载-用glmnet包实施套索算法-lasso.html">2016-12-15 转载
-用glmnet包实施套索算法 lasso</a></p>
-<p><a
-href="2016-11-12-deep-learning-series-in-python-5-6.html">2016-11-12
-deep learning series in python 5 6</a></p>
-<p><a
-href="2016-11-11-安装和使用深度学习包keras时遇到的卷积层维度和openblas问题.html">2016-11-11
-安装和使用深度学习包keras时遇到的卷积层维度和openblas问题</a></p>
-<p><a
-href="2016-09-13-deep-learning-series-in-python-1-4.html">2016-09-13
-deep learning series in python 1 4</a></p>
-<p><a
-href="2016-08-23-simple-data-analysis-web-application-by-shiny.html">*
-2016-08-23 simple data analysis web application by shiny</a></p>
-<p><a href="2016-08-23-data-visualization-gallery.html">2016-08-23 data
-visualization gallery</a></p>
-<p><a href="2016-08-15-r-books-recommendation.html">2016-08-15 r books
-recommendation</a></p>
-<p><a href="2016-07-28-word-cloud-web-application-by-shiny.html">*
-2016-07-28 word cloud web application by shiny</a></p>
-<p><a
-href="2016-07-27-data-in-action-series-5-regression-models.html">2016-07-27
-data in action series 5 regression models</a></p>
-<p><a
-href="2016-07-27-data-in-action-series-4-text-classification.html">2016-07-27
-data in action series 4 text classification</a></p>
-<p><a href="2016-07-21-data-science-series-in-python.html">2016-07-21
-data science series in python</a></p>
-<p><a
-href="2016-07-20-data-in-action-series-3-image-compression.html">2016-07-20
-data in action series 3 image compression</a></p>
-<p><a
-href="2016-07-20-data-in-action-series-2-recognition-of-human-faces.html">2016-07-20
-data in action series 2 recognition of human faces</a></p>
-<p><a
-href="2016-07-20-data-in-action-series-1-recognition-of-handwritten-digits.html">2016-07-20
-data in action series 1 recognition of handwritten digits</a></p>
-<p><a
-href="2016-06-01-data-analysis-series-vi-some-analysis-using-automobile-data-by-r-and-python.html">2016-06-01
-data analysis series vi some analysis using automobile data by r and
-python</a></p>
-<p><a
-href="2016-05-31-data-analysis-series-v-some-analysis-using-world-top-income-data-by-pandas.html">2016-05-31
-data analysis series v some analysis using world top income data by
-pandas</a></p>
-<p><a
-href="2016-05-23-data-analysis-series-iv-the-introduction-of-some-simulations.html">2016-05-23
-data analysis series iv the introduction of some simulations</a></p>
-<p><a
-href="2016-05-17-data-analysis-series-iii-the-introduction-of-some-distributions.html">2016-05-17
-data analysis series iii the introduction of some distributions</a></p>
-<p><a
-href="2016-05-14-data-analysis-series-ii-looking-at-data-two-and-more-variables.html">*
-2016-05-14 data analysis series ii looking at data two and more
-variables</a></p>
-<p><a
-href="2016-05-10-data-analysis-series-i-looking-at-data-a-single-variable.html">*
-2016-05-10 data analysis series i looking at data a single
-variable</a></p>
-<p><a
-href="2016-04-30-data-visualization-series-iii-do-some-plot-for-big-data-by-bokeh-in-python.html">2016-04-30
-data visualization series iii do some plot for big data by bokeh in
-python</a></p>
-<p><a
-href="2016-04-02-big-data-series-i-the-introduction-of-spark-in-python.html">2016-04-02
-big data series i the introduction of spark in python</a></p>
-<p><a
-href="2016-03-30-windows-上使用ipython-note-book-打开pyspark.html">2016-03-30
-windows 上使用ipython note book 打开pyspark</a></p>
-<p><a
-href="2016-03-22-data-visualization-series-ii-do-some-plot-by-seaborn-in-python.html">2016-03-22
-data visualization series ii do some plot by seaborn in python</a></p>
-<p><a href="2016-03-16-使用r从网页上爬取天气的数据.html">2016-03-16
-使用r从网页上爬取天气的数据</a></p>
-<p><a
-href="2016-03-04-数据可视化之-用r画地图-某市的各区构成图.html">2016-03-04
-数据可视化之 用r画地图 某市的各区构成图</a></p>
-<p><a
-href="2016-03-04-data-visualization-series-i-creating-a-map-in-r.html">*
-2016-03-04 data visualization series i creating a map in r</a></p>
-<p><a
-href="2016-03-03-虚拟机中ubuntu中的python-spark-notebook.html">2016-03-03
-虚拟机中ubuntu中的python spark notebook</a></p>
-<p><a href="2016-03-02-r中recharts包安装失败的解决方法.html">2016-03-02
-r中recharts包安装失败的解决方法</a></p>
-<p><a
-href="2016-02-29-regression-model-series-ii-do-some-nonlinear-regression-models-in-r-by-boston-housing-data-set.html">2016-02-29
-regression model series ii do some nonlinear regression models in r by
-boston housing data set</a></p>
-<p><a
-href="2016-02-26-regression-model-series-i-do-some-linear-regression-models-in-r-by-boston-housing-data-set.html">2016-02-26
-regression model series i do some linear regression models in r by
-boston housing data set</a></p>
-<p><a
-href="2016-02-23-classification-model-series-iii-compare-classification-models-use-cross-validation-in-r-by-field-goals-data-set.html">2016-02-23
-classification model series iii compare classification models use cross
-validation in r by field goals data set</a></p>
-<p><a
-href="2016-02-19-classification-model-series-ii-introduction-some-performance-metrics-of-the-classification-models-in-r-by-field-goals-data-set.html">2016-02-19
-classification model series ii introduction some performance metrics of
-the classification models in r by field goals data set</a></p>
-<p><a
-href="2016-02-19-classification-model-series-i-do-some-classification-models-in-r-by-iris-data-set.html">2016-02-19
-classification model series i do some classification models in r by iris
-data set</a></p>
-<p><a
-href="2016-01-16-cluster-for-some-short-texts-in-r.html">2016-01-16
-cluster for some short texts in r</a></p>
-<p><a
-href="2016-01-16-a-small-tip-about-r-transform-the-variable.html">2016-01-16
-a small tip about r transform the variable</a></p>
-<p><a
-href="2016-01-16-a-small-tip-about-r-subset-one-collumn-from-a-dataframe.html">2016-01-16
-a small tip about r subset one collumn from a dataframe</a></p>
-<p><a
-href="2016-01-16-a-small-tip-about-r-change-the-order-of-factor-levels.html">2016-01-16
-a small tip about r change the order of factor levels</a></p>
-<p><a
-href="2016-01-11-3-weight-methods-for-term-document-matrix-in-r.html">2016-01-11
-3 weight methods for term document matrix in r</a></p>
-<p><a
-href="2016-01-06-make-a-word-cloud-or-tag-cloud-in-python-and-r.html">2016-01-06
-make a word cloud or tag cloud in python and r</a></p>
-</div>
-<div id="section-6" class="section level2">
-<h2>2015</h2>
-<p><a
-href="2015-12-05-python画图包seaborn和matplotlib中文字体显示-针对windows系统-使用ipython-notebook.html">2015-12-05
-python画图包seaborn和matplotlib中文字体显示 针对windows系统 使用ipython
-notebook</a></p>
-<p><a href="2015-12-04-红绿灯图-在r和python中的实现.html">2015-12-04
-红绿灯图 在r和python中的实现</a></p>
-<p><a href="2015-11-13-关于批量处理excel文件.html">2015-11-13
-关于批量处理excel文件</a></p>
-<p><a
-href="2015-11-10-巧用主成分分析-链接文章中有python代码.html">2015-11-10
-巧用主成分分析 链接文章中有python代码</a></p>
-<p><a href="2015-10-13-r转python的学习过程.html">2015-10-13
-r转python的学习过程</a></p>
-<p><a href="2015-10-11-读书笔记.html">2015-10-12 读书笔记</a></p>
-<p><a href="2015-10-11-小谈推荐系统.html">2015-10-11
-小谈推荐系统</a></p>
-<p><a
-href="2015-07-20-购物篮分析-market-basket-analysis.html">2015-07-20
-购物篮分析 market basket analysis</a></p>
-<p><a href="2015-05-25-参加的第二个r语言大会.html">2015-05-25
-参加的第二个r语言大会</a></p>
-<p><a
-href="2015-05-25-重读-an-introduction-to-statistical-learning-笔记-第四章.html">2015-05-24
-重读 an introduction to statistical learning 笔记 第四章</a></p>
-<p><a
-href="2015-05-22-sas-statistical-model-summary-exercise.html">2015-05-22
-sas statistical model summary exercise</a></p>
-<p><a
-href="2015-03-19-重读-an-introduction-to-statistical-learning-笔记2-第三章.html">2015-03-19
-重读 an introduction to statistical learning 笔记2 第三章</a></p>
-<p><a
-href="2015-03-18-重读-an-introduction-to-statistical-learning-笔记1-前两个章节的.html">2015-03-18
-重读 an introduction to statistical learning 笔记1 前两个章节的</a></p>
-</div>
-<div id="section-7" class="section level2">
-<h2>2014</h2>
-<p><a href="2014-12-25-参加的第一個r語言大會-纪念下.html">2014-12-25
-参加的第一個r語言大會 纪念下</a></p>
-<p><a href="2014-09-25-分类模型汇总.html">2014-09-25
-分类模型汇总</a></p>
-<p><a
-href="2014-06-12-数据挖掘-使用mds可视化探索数据之间的近似性.html">2014-06-12
-数据挖掘 使用mds可视化探索数据之间的近似性</a></p>
-<p><a href="2014-06-10-数据挖掘-邮件优先级别.html">2014-06-11 数据挖掘
-邮件优先级别</a></p>
-<p><a href="2014-06-10-数据挖掘-垃圾邮件过滤.html">2014-06-10 数据挖掘
-垃圾邮件过滤</a></p>
-<p><a href="2014-03-20-感慨r中的向量化计算.html">2014-03-20
-感慨r中的向量化计算</a></p>
-<p><a href="2014-03-06-用r做作者的社交网絡分析.html">2014-03-07
-用r做作者的社交网絡分析</a></p>
-<p><a
-href="2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型.html">2014-03-06
-用r做文本分析lda latent dirichletallocation 潜在狄瑞雷克模型</a></p>
-<p><a href="2014-02-22-转载-caret包之三.html">2014-02-22 转载
-caret包之三</a></p>
-<p><a href="2014-02-21-转载-caret包之二.html">2014-02-21 转载
-caret包之二</a></p>
-<p><a href="2014-02-21-轉載-caret包初探.html">2014-02-20 轉載
-caret包初探</a></p>
-<p><a href="2014-02-21-转载-随机森林简介.html">2014-02-19 转载
-随机森林简介</a></p>
-</div>
-<div id="section-8" class="section level2">
-<h2>2013</h2>
-<p><a
-href="2013-11-08-用r做文本分析lsa-latent-semantic-analysis-潜在语义分析模型.html">2013-11-08
-用r做文本分析lsa latent semantic analysis 潜在语义分析模型</a></p>
-<p><a href="2013-09-24-用r做个简单的词云.html">2013-09-24
-用r做个简单的词云</a></p>
-<p><a href="2013-09-09-怎样把网页数据读入r.html">2013-09-09
-怎样把网页数据读入r</a></p>
-<p><a
-href="2013-08-02-a-handbook-of-statistical-analyses-using-r-ex2-1.html">2013-08-02
-a handbook of statistical analyses using r ex2-1</a></p>
-<p><a href="2013-06-20-project-euler-2.html">2013-06-20 project euler
-2</a></p>
-<p><a href="2013-05-14-project-euler-1.html">2013-05-14 project euler
-1</a></p>
+  <!-- 2023年文章 -->
+  <div class="year-section">
+    <h2>2023</h2>
+    <a href="2023-10-26-shanxi-travel-4.html" class="post-link">
+      <span class="post-date">2023-10-26</span>
+      <span class="post-title">山西游记之平遥古城</span>
+    </a>
+    <a href="2023-10-26-shanxi-travel-3.html" class="post-link">
+      <span class="post-date">2023-10-26</span>
+      <span class="post-title">山西游记之双林寺</span>
+    </a>
+    <a href="2023-10-26-shanxi-travel-2.html" class="post-link">
+      <span class="post-date">2023-10-26</span>
+      <span class="post-title">山西游记之晋祠</span>
+    </a>
+    <a href="2023-09-21-shanxi_travel.html" class="post-link">
+      <span class="post-date">2023-09-21</span>
+      <span class="post-title">山西游记之山西省博物馆</span>
+    </a>
+    <a href="2023-03-02-learning-opencv-python-bitwise-operation.html" class="post-link">
+      <span class="post-date">2023-03-02</span>
+      <span class="post-title">Learning OpenCV Python 1: Bitwise Operation</span>
+    </a>
+  </div>
+
+  <!-- 2021年文章 -->
+  <div class="year-section">
+    <h2>2021</h2>
+    <a href="2021-12-23-dtplyr-memo.html" class="post-link">
+      <span class="post-date">2021-12-23</span>
+      <span class="post-title">dtplyr memo</span>
+    </a>
+    <a href="2021-12-13-booklist.html" class="post-link featured-post">
+      <span class="post-date">2021-12-13</span>
+      <span class="post-title">booklist</span>
+    </a>
+    <a href="2021-12-06-分分合合.html" class="post-link featured-post">
+      <span class="post-date">2021-12-06</span>
+      <span class="post-title">分分合合</span>
+    </a>
+    <a href="2021-10-14-dao-de-jing-notes.html" class="post-link">
+      <span class="post-date">2021-10-14</span>
+      <span class="post-title">道德真经注 宋苏辙</span>
+    </a>
+  </div>
+
+  <!-- 2019年文章 -->
+  <div class="year-section">
+    <h2>2019</h2>
+    <a href="2019-03-07-用blogdown和gitalk搭建个人网站.html" class="post-link featured-post">
+      <span class="post-date">2019-03-07</span>
+      <span class="post-title">用blogdown和gitalk搭建个人网站</span>
+    </a>
+  </div>
+
+  <!-- 2018年文章 -->
+  <div class="year-section">
+    <h2>2018</h2>
+    <a href="2018-09-18-信息爆炸-见多识广-与-孤陋寡闻-在模型变量上的体现.html" class="post-link">
+      <span class="post-date">2018-09-18</span>
+      <span class="post-title">信息爆炸 见多识广 与 孤陋寡闻 在模型变量上的体现</span>
+    </a>
+    <a href="2018-04-18-转载-机器学习是什么-周志华.html" class="post-link">
+      <span class="post-date">2018-04-18</span>
+      <span class="post-title">转载 机器学习是什么 周志华</span>
+    </a>
+    <a href="2018-03-16-小议数据分析.html" class="post-link featured-post">
+      <span class="post-date">2018-03-16</span>
+      <span class="post-title">小议数据分析</span>
+    </a>
+  </div>
+
+  <!-- 2017年文章 -->
+  <div class="year-section">
+    <h2>2017</h2>
+    <div class="initial-posts">
+      <a href="2017-12-01-map-function-replace-apply-family-in-base-r.html" class="post-link">
+        <span class="post-date">2017-12-01</span>
+        <span class="post-title">Map Function Replace Apply Family in Base R</span>
+      </a>
+      <a href="2017-11-22-good-book-recommendation-r-for-data-science.html" class="post-link">
+        <span class="post-date">2017-11-22</span>
+        <span class="post-title">Good Book Recommendation: R for Data Science</span>
+      </a>
+      <a href="2017-09-22-r-包-dplyr-备忘.html" class="post-link">
+        <span class="post-date">2017-09-22</span>
+        <span class="post-title">R包dplyr备忘</span>
+      </a>
+    </div>
+    <div class="more-posts" style="display: none;">
+      <a href="2017-09-14-data-visualization-series-iv-create-interactive-map-in-r.html" class="post-link">
+        <span class="post-date">2017-09-14</span>
+        <span class="post-title">Data Visualization Series IV: Create Interactive Map in R</span>
+      </a>
+      <a href="2017-09-08-r包data-table备忘.html" class="post-link">
+        <span class="post-date">2017-09-08</span>
+        <span class="post-title">R包data.table备忘</span>
+      </a>
+      <a href="2017-09-05-kaggle-竞赛有感4.html" class="post-link featured-post">
+        <span class="post-date">2017-09-05</span>
+        <span class="post-title">Kaggle竞赛有感4</span>
+      </a>
+      <a href="2017-09-04-使用r语言制作具有交互效果的词云.html" class="post-link">
+        <span class="post-date">2017-09-04</span>
+        <span class="post-title">使用R语言制作具有交互效果的词云</span>
+      </a>
+      <a href="2017-08-15-kaggle-竞赛有感3小议集成模型.html" class="post-link">
+        <span class="post-date">2017-08-15</span>
+        <span class="post-title">Kaggle竞赛有感3: 小议集成模型</span>
+      </a>
+      <a href="2017-07-31-kaggle-竞赛有感2.html" class="post-link">
+        <span class="post-date">2017-07-31</span>
+        <span class="post-title">Kaggle竞赛有感2</span>
+      </a>
+      <a href="2017-07-21-kaggle-竞赛有感之小议模型训练的欠拟合与过拟合.html" class="post-link">
+        <span class="post-date">2017-07-21</span>
+        <span class="post-title">Kaggle竞赛有感之小议模型训练的欠拟合与过拟合</span>
+      </a>
+      <a href="2017-07-11-kaggle-competition-series-1-2.html" class="post-link">
+        <span class="post-date">2017-07-11</span>
+        <span class="post-title">Kaggle competition series: 1-2</span>
+      </a>
+      <a href="2017-06-06-r的shiny中的分级菜单.html" class="post-link">
+        <span class="post-date">2017-06-06</span>
+        <span class="post-title">R的shiny中的分级菜单</span>
+      </a>
+      <a href="2017-05-10-deep-learning-series-8-10.html" class="post-link">
+        <span class="post-date">2017-05-10</span>
+        <span class="post-title">Deep Learning Series 8 - 10</span>
+      </a>
+      <a href="2017-05-08-deep-learning-series-7-text-document-classification-using-20-newsgroups-dataset.html" class="post-link">
+        <span class="post-date">2017-05-09</span>
+        <span class="post-title">Deep Learning Series 7: text document classification using 20 newsgroups dataset</span>
+      </a>
+      <a href="2017-05-08-python-tips-2-使用reload-sys-后-再使用print语句无输出.html" class="post-link">
+        <span class="post-date">2017-05-08</span>
+        <span class="post-title">Python tips 2: 使用reload sys后再使用print语句无输出</span>
+      </a>
+      <a href="2017-05-07-python-tips-1-unicodeencodeerror-ascii-codec-can-03.html" class="post-link">
+        <span class="post-date">2017-05-07</span>
+        <span class="post-title">Python tips 1: unicode encode error ascii codeccan03</span>
+      </a>
+      <a href="2017-02-08-computer-vision-series-1-2.html" class="post-link">
+        <span class="post-date">2017-02-08</span>
+        <span class="post-title">Computer Vision Series: 1-2</span>
+      </a>
+      <a href="2017-01-07-text-mining-series-3-automatic-summarization.html" class="post-link">
+        <span class="post-date">2017-01-07</span>
+        <span class="post-title">Text Mining Series 3: automatic summarization</span>
+      </a>
+      <a href="2017-01-07-text-mining-series-2-make-a-spell-correct.html" class="post-link">
+        <span class="post-date">2017-01-07</span>
+        <span class="post-title">Text Mining Series 2: make a spell correct</span>
+      </a>
+    </div>
+    <button class="toggle-posts-btn" data-year="2017">查看更多</button>
+  </div>
+
+  <!-- 2016年文章 -->
+  <div class="year-section">
+    <h2>2016</h2>
+    <div class="initial-posts">
+      <a href="2016-12-27-text-mining-series-1-sentiment-analysis.html" class="post-link">
+        <span class="post-date">2016-12-27</span>
+        <span class="post-title">Text Mining Series 1: Sentiment Analysis</span>
+      </a>
+      <a href="2016-12-15-转载-用glmnet包实施套索算法-lasso.html" class="post-link">
+        <span class="post-date">2016-12-15</span>
+        <span class="post-title">转载 用glmnet包实施套索算法 LASSO</span>
+      </a>
+      <a href="2016-11-12-deep-learning-series-in-python-5-6.html" class="post-link">
+        <span class="post-date">2016-11-12</span>
+        <span class="post-title">Deep Learning Series in Python 5-6</span>
+      </a>
+    </div>
+    <div class="more-posts" style="display: none;">
+      <a href="2016-11-11-安装和使用深度学习包keras时遇到的卷积层维度和openblas问题.html" class="post-link">
+        <span class="post-date">2016-11-11</span>
+        <span class="post-title">安装和使用深度学习包keras时遇到的卷积层维度和openblas问题</span>
+      </a>
+      <a href="2016-09-13-deep-learning-series-in-python-1-4.html" class="post-link">
+        <span class="post-date">2016-09-13</span>
+        <span class="post-title">Deep Learning Series in Python 1-4</span>
+      </a>
+      <a href="2016-08-23-simple-data-analysis-web-application-by-shiny.html" class="post-link">
+        <span class="post-date">2016-08-23</span>
+        <span class="post-title">Simple data analysis web application by shiny</span>
+      </a>
+      <a href="2016-08-23-data-visualization-gallery.html" class="post-link">
+        <span class="post-date">2016-08-23</span>
+        <span class="post-title">Data Visualization Gallery</span>
+      </a>
+      <a href="2016-08-15-r-books-recommendation.html" class="post-link">
+        <span class="post-date">2016-08-15</span>
+        <span class="post-title">R Books Recommendation</span>
+      </a>
+      <a href="2016-07-28-word-cloud-web-application-by-shiny.html" class="post-link">
+        <span class="post-date">2016-07-28</span>
+        <span class="post-title">Word cloud web application by shiny</span>
+      </a>
+      <a href="2016-07-27-data-in-action-series-5-regression-models.html" class="post-link">
+        <span class="post-date">2016-07-27</span>
+        <span class="post-title">Data in action series 5: regression models</span>
+      </a>
+      <a href="2016-07-27-data-in-action-series-4-text-classification.html" class="post-link">
+        <span class="post-date">2016-07-27</span>
+        <span class="post-title">Data in action series 4: text classification</span>
+      </a>
+      <a href="2016-07-21-data-science-series-in-python.html" class="post-link">
+        <span class="post-date">2016-07-21</span>
+        <span class="post-title">Data Science Series in Python</span>
+      </a>
+      <a href="2016-07-20-data-in-action-series-3-image-compression.html" class="post-link">
+        <span class="post-date">2016-07-20</span>
+        <span class="post-title">Data in action series 3: image compression</span>
+      </a>
+      <a href="2016-07-20-data-in-action-series-2-recognition-of-human-faces.html" class="post-link">
+        <span class="post-date">2016-07-20</span>
+        <span class="post-title">Data in action series 2: recognition of human faces/span>
+      </a>
+      <a href="2016-07-20-data-in-action-series-1-recognition-of-handwritten-digits.html" class="post-link">
+        <span class="post-date">2016-07-20</span>
+        <span class="post-title">Data in action series 1: recognition of handwritten digits</span>
+      </a>
+      <a href="2016-06-01-data-analysis-series-vi-some-analysis-using-automobile-data-by-r-and-python.html" class="post-link">
+        <span class="post-date">2016-06-01</span>
+        <span class="post-title">Data analysis series vi: some analysis using automobile data by R and Python</span>
+      </a>
+      <a href="2016-05-31-data-analysis-series-v-some-analysis-using-world-top-income-data-by-pandas.html" class="post-link">
+        <span class="post-date">2016-05-31</span>
+        <span class="post-title">Data analysis series v: some analysis using world top income data by Pandas</span>
+      </a>
+      <a href="2016-05-23-data-analysis-series-iv-the-introduction-of-some-simulations.html" class="post-link">
+        <span class="post-date">2016-05-23</span>
+        <span class="post-title">Data analysis series iv: the introduction of some simulations</span>
+      </a>
+      <a href="2016-05-17-data-analysis-series-iii-the-introduction-of-some-distributions.html" class="post-link">
+        <span class="post-date">2016-05-17</span>
+        <span class="post-title">Data analysis series iii: the introduction of some distributions</span>
+      </a>
+      <a href="2016-05-14-data-analysis-series-ii-looking-at-data-two-and-more-variables.html" class="post-link">
+        <span class="post-date">2016-05-14</span>
+        <span class="post-title">Data analysis series ii: looking at data two and more variables</span>
+      </a>
+      <a href="2016-05-10-data-analysis-series-i-looking-at-data-a-single-variable.html" class="post-link">
+        <span class="post-date">2016-05-10</span>
+        <span class="post-title">Data analysis series i: looking at data a single variable</span>
+      </a>
+      <a href="2016-04-30-data-visualization-series-iii-do-some-plot-for-big-data-by-bokeh-in-python.html" class="post-link">
+        <span class="post-date">2016-04-30</span>
+        <span class="post-title">Data Visualization Series III: do some plot for big data by bokeh in python</span>
+      </a>
+      <a href="2016-04-02-big-data-series-i-the-introduction-of-spark-in-python.html" class="post-link">
+        <span class="post-date">2016-04-02</span>
+        <span class="post-title">Big data series i: the introduction of spark in python</span>
+      </a>
+      <a href="2016-03-30-windows-上使用ipython-note-book-打开pyspark.html" class="post-link">
+        <span class="post-date">2016-03-30</span>
+        <span class="post-title">windows上使用ipython note book打开pyspark</span>
+      </a>
+      <a href="2016-03-22-data-visualization-series-ii-do-some-plot-by-seaborn-in-python.html" class="post-link">
+        <span class="post-date">2016-03-22</span>
+        <span class="post-title">Data Visualization Series II: do some plot by seaborn in python</span>
+      </a>
+      <a href="2016-03-16-使用r从网页上爬取天气的数据.html" class="post-link">
+        <span class="post-date">2016-03-16</span>
+        <span class="post-title">使用R从网页上爬取天气的数据</span>
+      </a>
+      <a href="2016-03-04-data-visualization-series-i-creating-a-map-in-r.html" class="post-link">
+        <span class="post-date">2016-03-04</span>
+        <span class="post-title">Data Visualization Series I: creating a map in R</span>
+      </a>
+      <a href="2016-03-04-数据可视化之-用r画地图-某市的各区构成图.html" class="post-link">
+        <span class="post-date">2016-03-04</span>
+        <span class="post-title">数据可视化之用R画地图: 某市的各区构成图</span>
+      </a>
+      <a href="2016-03-03-虚拟机中ubuntu中的python-spark-notebook.html" class="post-link">
+        <span class="post-date">2016-03-03</span>
+        <span class="post-title">虚拟机ubuntu中的python spark notebook</span>
+      </a>
+      <a href="2016-03-02-r中recharts包安装失败的解决方法.html" class="post-link">
+        <span class="post-date">2016-03-02</span>
+        <span class="post-title">R中recharts包安装失败的解决方法</span>
+      </a>
+      <a href="2016-02-29-regression-model-series-ii-do-some-nonlinear-regression-models-in-r-by-boston-housing-data-set.html" class="post-link">
+        <span class="post-date">2016-02-29</span>
+        <span class="post-title">Regression model series ii: do some nonlinear regression models in R by boston housing dataset</span>
+      </a>
+      <a href="2016-02-26-regression-model-series-i-do-some-linear-regression-models-in-r-by-boston-housing-data-set.html" class="post-link">
+        <span class="post-date">2016-02-26</span>
+        <span class="post-title">Regression model series i: do some linear regression models in R by boston housing dataset</span>
+      </a>
+      <a href="2016-02-23-classification-model-series-iii-compare-classification-models-use-cross-validation-in-r-by-field-goals-data-set.html" class="post-link">
+        <span class="post-date">2016-02-23</span>
+        <span class="post-title">Classification model series iii: compare classification models use cross validation in R by field goals dataset</span>
+      </a>
+      <a href="2016-02-19-classification-model-series-ii-introduction-some-performance-metrics-of-the-classification-models-in-r-by-field-goals-data-set.html" class="post-link">
+        <span class="post-date">2016-02-19</span>
+        <span class="post-title">Classification model series ii: introduction some performance metrics of the classification models in R by field goals dataset</span>
+      </a>
+      <a href="2016-02-19-classification-model-series-i-do-some-classification-models-in-r-by-iris-data-set.html" class="post-link">
+        <span class="post-date">2016-02-19</span>
+        <span class="post-title">Classification model series i: do some classification models in R by iris dataset</span>
+      </a>
+      <a href="2016-01-16-cluster-for-some-short-texts-in-r.html" class="post-link">
+        <span class="post-date">2016-01-16</span>
+        <span class="post-title">Cluster for some short texts in R</span>
+      </a>
+      <a href="2016-01-16-a-small-tip-about-r-transform-the-variable.html" class="post-link">
+        <span class="post-date">2016-01-16</span>
+        <span class="post-title">A small tip about R: transform the variable</span>
+      </a>
+      <a href="2016-01-16-a-small-tip-about-r-subset-one-collumn-from-a-dataframe.html" class="post-link">
+        <span class="post-date">2016-01-16</span>
+        <span class="post-title">A small tip about R: subset one collumn from a dataframe</span>
+      </a>
+      <a href="2016-01-16-a-small-tip-about-r-change-the-order-of-factor-levels.html" class="post-link">
+        <span class="post-date">2016-01-16</span>
+        <span class="post-title">A small tip about R: change the order of factor levels</span>
+      </a>
+      <a href="2016-01-11-3-weight-methods-for-term-document-matrix-in-r.html" class="post-link">
+        <span class="post-date">2016-01-11</span>
+        <span class="post-title">3 weight methods for term document matrix in R</span>
+      </a>
+      <a href="2016-01-06-make-a-word-cloud-or-tag-cloud-in-python-and-r.html" class="post-link">
+        <span class="post-date">2016-01-06</span>
+        <span class="post-title">Make a word cloud or tag cloud in Python and R</span>
+      </a>
+    </div>
+    <button class="toggle-posts-btn" data-year="2016">查看更多</button>
+  </div>
+
+  <!-- 2015年文章 -->
+  <div class="year-section">
+    <h2>2015</h2>
+    <div class="initial-posts">
+      <a href="2015-12-05-python画图包seaborn和matplotlib中文字体显示-针对windows系统-使用ipython-notebook.html" class="post-link">
+        <span class="post-date">2015-12-05</span>
+        <span class="post-title">Python画图包seaborn和matplotlib中文字体显示 针对windows系统 使用ipython notebook</span>
+      </a>
+      <a href="2015-12-04-红绿灯图-在r和python中的实现.html" class="post-link">
+        <span class="post-date">2015-12-04</span>
+        <span class="post-title">红绿灯图 在R和Python中的实现</span>
+      </a>
+      <a href="2015-11-13-关于批量处理excel文件.html" class="post-link">
+        <span class="post-date">2015-11-13</span>
+        <span class="post-title">关于批量处理excel文件</span>
+      </a>
+    </div>
+    <div class="more-posts" style="display: none;">
+      <a href="2015-11-10-巧用主成分分析-链接文章中有python代码.html" class="post-link">
+        <span class="post-date">2015-11-10</span>
+        <span class="post-title">巧用主成分分析-链接文章中有python代码</span>
+      </a>
+      <a href="2015-10-13-r转python的学习过程.html" class="post-link">
+        <span class="post-date">2015-10-13</span>
+        <span class="post-title">R转Python的学习过程</span>
+      </a>
+      <a href="2015-10-11-读书笔记.html" class="post-link">
+        <span class="post-date">2015-10-12</span>
+        <span class="post-title">读书笔记</span>
+      </a>
+      <a href="2015-10-11-小谈推荐系统.html" class="post-link">
+        <span class="post-date">2015-10-11</span>
+        <span class="post-title">小谈推荐系统</span>
+      </a>
+      <a href="2015-07-20-购物篮分析-market-basket-analysis.html" class="post-link">
+        <span class="post-date">2015-07-20</span>
+        <span class="post-title">购物篮分析 market basket analysis</span>
+      </a>
+      <a href="2015-05-25-参加的第二个r语言大会.html" class="post-link">
+        <span class="post-date">2015-05-25</span>
+        <span class="post-title">参加的第二个R语言大会</span>
+      </a>
+      <a href="2015-05-25-重读-an-introduction-to-statistical-learning-笔记-第四章.html" class="post-link">
+        <span class="post-date">2015-05-24</span>
+        <span class="post-title">重读《An introduction to statistical learning》第四章</span>
+      </a>
+      <a href="2015-05-22-sas-statistical-model-summary-exercise.html" class="post-link">
+        <span class="post-date">2015-05-22</span>
+        <span class="post-title">sas statistical model summary exercise</span>
+      </a>
+      <a href="2015-03-19-重读-an-introduction-to-statistical-learning-笔记2-第三章.html" class="post-link">
+        <span class="post-date">2015-03-19</span>
+        <span class="post-title">重读《An introduction to statistical learning》第三章</span>
+      </a>
+      <a href="2015-03-18-重读-an-introduction-to-statistical-learning-笔记1-前两个章节的.html" class="post-link">
+        <span class="post-date">2015-03-18</span>
+        <span class="post-title">重读《An introduction to statistical learning》第一章和第二章</span>
+      </a>
+    </div>
+    <button class="toggle-posts-btn" data-year="2015">查看更多</button>
+  </div>
+
+  <!-- 2014年文章 -->
+  <div class="year-section">
+    <h2>2014</h2>
+    <div class="initial-posts">
+      <a href="2014-12-25-参加了的第1个r语言大会-纪念下.html" class="post-link">
+        <span class="post-date">2014-12-25</span>
+        <span class="post-title">参加了的第1个R语言大会，纪念下</span>
+      </a>
+      <a href="2014-09-25-分类模型汇总.html" class="post-link">
+        <span class="post-date">2014-09-25</span>
+        <span class="post-title">分类模型汇总</span>
+      </a>
+      <a href="2014-06-12-数据挖掘-使用mds可视化探索数据之间的近似性.html" class="post-link">
+        <span class="post-date">2014-06-12</span>
+        <span class="post-title">数据挖掘 使用mds可视化探索数据之间的近似性</span>
+      </a>
+    </div>
+    <div class="more-posts" style="display: none;">
+      <a href="2014-06-10-数据挖掘-邮件优先级别.html" class="post-link">
+        <span class="post-date">2014-06-11</span>
+        <span class="post-title">数据挖掘 邮件优先级别</span>
+      </a>
+      <a href="2014-06-10-数据挖掘-垃圾邮件过滤.html" class="post-link">
+        <span class="post-date">2014-06-10</span>
+        <span class="post-title">数据挖掘 垃圾邮件过滤</span>
+      </a>
+      <a href="2014-03-20-感慨r中的向量化计算.html" class="post-link">
+        <span class="post-date">2014-03-20</span>
+        <span class="post-title">感慨R中的向量化计算</span>
+      </a>
+      <a href="2014-03-06-用r做作者的社交網絡分析.html" class="post-link">
+        <span class="post-date">2014-03-07</span>
+        <span class="post-title">用R做作者的社交网絡分析</span>
+      </a>
+      <a href="2014-03-06-用r做文本分析lda-latent-dirichletallocation-潜在狄瑞雷克模型.html" class="post-link">
+        <span class="post-date">2014-03-06</span>
+        <span class="post-title">用R做文本分析LDA latent dirichlet allocation 潜在狄瑞雷克模型</span>
+      </a>
+      <a href="2014-02-22-转载-caret包之三.html" class="post-link">
+        <span class="post-date">2014-02-22</span>
+        <span class="post-title">转载——caret包之三</span>
+      </a>
+      <a href="2014-02-21-转载-caret包之二.html" class="post-link">
+        <span class="post-date">2014-02-21</span>
+        <span class="post-title">转载——caret包之二</span>
+      </a>
+      <a href="2014-02-21-轉載-caret包初探.html" class="post-link">
+        <span class="post-date">2014-02-20</span>
+        <span class="post-title">转载——caret包初探</span>
+      </a>
+      <a href="2014-02-21-转载-随机森林简介.html" class="post-link">
+        <span class="post-date">2014-02-19</span>
+        <span class="post-title">转载——随机森林简介</span>
+      </a>
+    </div>
+    <button class="toggle-posts-btn" data-year="2014">查看更多</button>
+  </div>
+
+  <!-- 2013年文章 -->
+  <div class="year-section">
+    <h2>2013</h2>
+    <div class="initial-posts">
+      <a href="2013-11-08-用r做文本分析lsa-latent-semantic-analysis-潜在语义分析模型.html" class="post-link">
+        <span class="post-date">2013-11-08</span>
+        <span class="post-title">用R做文本分析LSA (Latent Semantic Analysis) 潜在语义分析模型</span>
+      </a>
+      <a href="2013-09-24-用r做个简单的词云.html" class="post-link">
+        <span class="post-date">2013-09-24</span>
+        <span class="post-title">用R做个简单的词云</span>
+      </a>
+      <a href="2013-09-09-怎样把网页数据读入r.html" class="post-link">
+        <span class="post-date">2013-09-09</span>
+        <span class="post-title">怎样把网页数据读入R</span>
+      </a>
+    </div>
+    <div class="more-posts" style="display: none;">
+      <a href="2013-08-02-a-handbook-of-statistical-analyses-using-r-ex2-1.html" class="post-link">
+        <span class="post-date">2013-08-02</span>
+        <span class="post-title">A Handbook of Statistical Analyses Using R Ex2.1</span>
+      </a>
+      <a href="2013-06-20-project-euler-2.html" class="post-link">
+        <span class="post-date">2013-06-20</span>
+        <span class="post-title">Project Euler 2</span>
+      </a>
+      <a href="2013-05-14-project-euler-1.html" class="post-link">
+        <span class="post-date">2013-05-14</span>
+        <span class="post-title">Project Euler 1</span>
+      </a>
+    </div>
+    <button class="toggle-posts-btn" data-year="2013">查看更多</button>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer">
+    <p>© 2025 Bei's Blog. All rights reserved.</p>
+    <p>Built with <a href="https://bookdown.org/yihui/blogdown/" target="_blank">blogdown</a> and hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.</p>
+  </div>
 </div>
 
+</div>
 
-  <!-- Link Gitalk 的支持文件  -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-  <script src="md5.min.js"></script>
-<div id="gitalk-container"></div>     
-<script type="text/javascript">
-    const gitalk = new Gitalk({
-    // gitalk的主要参数
-		clientID: '132a6ad2a350dd61828f',
-		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
-		repo: 'blog_rmarkdown',
-		owner: 'yishi',
-		admin: ['yishi'],
-		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
-    distractionFreeMode: true  // Facebook-like distraction free mode
+<script>
+// 为带星号的文章添加特殊标记
+$(document).ready(function() {
+  $('a[href*="*"]').addClass('featured-post');
+  
+  // 添加查看更多/收起功能
+  $('.toggle-posts-btn').click(function() {
+    var year = $(this).data('year');
+    var parentSection = $(this).closest('.year-section');
+    var morePosts = parentSection.find('.more-posts');
     
-    });
-    gitalk.render('gitalk-container');
-</script> 
-<!-- Gitalk end -->
-
-
-
-
-</div>
-
-<script>
-
-// add bootstrap table styles to pandoc tables
-function bootstrapStylePandocTables() {
-  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
-}
-$(document).ready(function () {
-  bootstrapStylePandocTables();
-});
-
-
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open');
+    if (morePosts.is(':visible')) {
+      morePosts.slideUp();
+      $(this).text('查看更多');
+    } else {
+      morePosts.slideDown();
+      $(this).text('收起');
+    }
   });
 });
 </script>
 
-<!-- code folding -->
+<style>
+/* 查看更多按钮样式 */
+.toggle-posts-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 8px 15px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
+.toggle-posts-btn:hover {
+  background-color: #2980b9;
+}
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
+/* 初始显示的文章和更多文章的容器 */
+.initial-posts, .more-posts {
+  width: 100%;
+}
+</style>
 </body>
 </html>

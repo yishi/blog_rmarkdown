@@ -11,9 +11,9 @@
 
 
 
-<title>About</title>
+<title>About Me</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -55,7 +55,154 @@ if (window.hljs) {
 }
 </script>
 
-
+<!-- 新增自定义样式 -->
+<style type="text/css">
+  /* 页面背景和整体样式 */
+  body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  /* 顶部背景图片区域 */
+  .about-header {
+    background-image: url('https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    position: relative;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .about-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .about-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  .about-subtitle {
+    font-size: 20px;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  }
+  
+  /* 内容区域样式 */
+  .about-content {
+    background-color: white;
+    border-radius: 5px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .about-content h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .about-content p {
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  
+  /* 技能区域样式 */
+  .skills-section {
+    margin-top: 30px;
+  }
+  
+  .skill-item {
+    margin-bottom: 15px;
+  }
+  
+  .skill-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #2c3e50;
+  }
+  
+  .skill-bar {
+    height: 10px;
+    background-color: #ecf0f1;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .skill-level {
+    height: 100%;
+    background-color: #3498db;
+  }
+  
+  /* 联系方式样式 */
+  .contact-section {
+    margin-top: 30px;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .contact-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
+    color: #3498db;
+    text-align: center;
+    line-height: 30px;
+    font-size: 18px;
+  }
+  
+  /* 导航栏样式优化 */
+  .navbar-default {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .navbar-default .navbar-brand,
+  .navbar-default .navbar-nav > li > a {
+    color: white;
+  }
+  
+  .navbar-default .navbar-brand:hover,
+  .navbar-default .navbar-nav > li > a:hover {
+    color: #3498db;
+  }
+  
+  /* 页脚样式 */
+  .footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 30px;
+    color: #7f8c8d;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+  }
+</style>
 
 
 
@@ -82,6 +229,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -139,11 +289,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -172,8 +326,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -181,16 +335,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -234,7 +381,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -260,83 +407,97 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div id="header">
-
-
-
-<h1 class="title toc-ignore">About</h1>
-
+<!-- 新增顶部背景图片区域 -->
+<div class="about-header">
+  <div class="about-overlay">
+    <h1 class="about-title">关于我</h1>
+    <p class="about-subtitle">数据科学爱好者 | R语言与Python开发者 | 旅行爱好者</p>
+  </div>
 </div>
 
-
-<p>Love R, love Data.</p>
-
-
-  <!-- Link Gitalk 的支持文件  -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-  <script src="md5.min.js"></script>
-<div id="gitalk-container"></div>     
-<script type="text/javascript">
-    const gitalk = new Gitalk({
-    // gitalk的主要参数
-		clientID: '132a6ad2a350dd61828f',
-		clientSecret: '15341d30534ecad1cceb3eca0311809f8b95136a',
-		repo: 'blog_rmarkdown',
-		owner: 'yishi',
-		admin: ['yishi'],
-		id: md5(window.location.pathname),// Ensure uniqueness and length less than 50
-    distractionFreeMode: true  // Facebook-like distraction free mode
+<div class="container">
+  <!-- 个人简介 -->
+  <div class="about-content">
+    <h2>个人简介</h2>
+    <p>您好，我是Bei，一名热爱数据科学和编程的技术爱好者。我专注于使用R语言和Python进行数据分析、可视化和机器学习。通过这个博客，我希望能够分享我在数据科学领域的学习心得和实践经验。</p>
     
-    });
-    gitalk.render('gitalk-container');
-</script> 
-<!-- Gitalk end -->
+    <p>我对文本挖掘、深度学习和数据可视化特别感兴趣，并且喜欢探索新的技术和方法来解决实际问题。在闲暇时间，我也喜欢旅行，记录美好的风景和文化体验。</p>
+    
+    <!-- 技能部分 -->
+    <div class="skills-section">
+      <h2>技能专长</h2>
+      
+      <div class="skill-item">
+        <div class="skill-name">R语言</div>
+        <div class="skill-bar">
+          <div class="skill-level" style="width: 95%;"></div>
+        </div>
+      </div>
+      
+      <div class="skill-item">
+        <div class="skill-name">Python</div>
+        <div class="skill-bar">
+          <div class="skill-level" style="width: 90%;"></div>
+        </div>
+      </div>
+      
+      <div class="skill-item">
+        <div class="skill-name">数据可视化</div>
+        <div class="skill-bar">
+          <div class="skill-level" style="width: 85%;"></div>
+        </div>
+      </div>
+      
+      <div class="skill-item">
+        <div class="skill-name">机器学习</div>
+        <div class="skill-bar">
+          <div class="skill-level" style="width: 80%;"></div>
+        </div>
+      </div>
+      
+      <div class="skill-item">
+        <div class="skill-name">深度学习</div>
+        <div class="skill-bar">
+          <div class="skill-level" style="width: 75%;"></div>
+        </div>
+      </div>
+      
+      <div class="skill-item">
+        <div class="skill-name">文本挖掘</div>
+        <div class="skill-bar">
+          <div class="skill-level" style="width: 85%;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 联系方式 -->
+    <div class="contact-section">
+      <h2>联系方式</h2>
+      
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="glyphicon glyphicon-envelope"></i>
+        </div>
+        <div>kong_026@163.com</div>
+      </div>
+      
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="glyphicon glyphicon-globe"></i>
+        </div>
+        <div><a href="https://github.com/yishi" target="_blank">GitHub: yishi</a></div>
+      </div>
+    </div>
+  </div>
 
-
-
-
+  <!-- 页脚 -->
+  <div class="footer">
+    <p>© 2025 Bei's Blog. All rights reserved.</p>
+    <p>Built with <a href="https://bookdown.org/yihui/blogdown/" target="_blank">blogdown</a> and hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.</p>
+  </div>
 </div>
 
-<script>
-
-// add bootstrap table styles to pandoc tables
-function bootstrapStylePandocTables() {
-  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
-}
-$(document).ready(function () {
-  bootstrapStylePandocTables();
-});
-
-
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open');
-  });
-});
-</script>
-
-<!-- code folding -->
-
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
+</div>
 
 </body>
 </html>
