@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>李白《赠汪伦》- 古诗文赏析</title>
+    <meta name="description" content="李白著名诗作《赠汪伦》的视频赏析与文本解读">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Preline UI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline/dist/preline.min.css" />
+    
+    <!-- 字体 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+    
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'serif'],
+                        poetry: ['"Noto Serif SC"', 'STSong', 'SimSun', 'serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        @keyframes gradualFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fade-in {
+            animation: gradualFadeIn 0.8s ease-in-out;
+        }
+        
+        .poetry-text {
+            font-family: 'Noto Serif SC', STSong, SimSun, serif;
+            line-height: 1.8;
+            letter-spacing: 1px;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 20px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(156, 163, 175, 0.8);
+        }
+        
+        /* 深色模式滚动条 */
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: rgba(75, 85, 99, 0.5);
+        }
+        
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(75, 85, 99, 0.8);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <a href="#" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-primary-600 dark:text-primary-400">古诗文赏析</span>
+                </a>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <i class="fas fa-sun text-yellow-500 dark:hidden"></i>
+                        <i class="fas fa-moon text-blue-300 hidden dark:block"></i>
+                    </button>
+                    
+                    <button class="lg:hidden p-2" id="mobile-menu-button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <nav class="hidden lg:flex items-center space-x-6">
+                        <a href="#video" class="font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">视频欣赏</a>
+                        <a href="#poem" class="font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">诗词原文</a>
+                        <a href="#analysis" class="font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">赏析</a>
+                        <a href="#author" class="font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">关于作者</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="lg:hidden hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <div class="container mx-auto px-4 py-3 space-y-2">
+                <a href="#video" class="block py-2 font-medium hover:text-primary-600 dark:hover:text-primary-400">视频欣赏</a>
+                <a href="#poem" class="block py-2 font-medium hover:text-primary-600 dark:hover:text-primary-400">诗词原文</a>
+                <a href="#analysis" class="block py-2 font-medium hover:text-primary-600 dark:hover:text-primary-400">赏析</a>
+                <a href="#author" class="block py-2 font-medium hover:text-primary-600 dark:hover:text-primary-400">关于作者</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <!-- 英雄区域 -->
+        <section class="py-10 md:py-16 animate-fade-in">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-poetry">李白《赠汪伦》</h1>
+                <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8">唐代诗人李白与友人汪伦的真挚友谊</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#video" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center">
+                        <i class="fas fa-play-circle mr-2"></i> 观看视频
+                    </a>
+                    <a href="#poem" class="px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-300 dark:border-gray-600">
+                        <i class="fas fa-book-open mr-2"></i> 阅读原文
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 视频区域 -->
+        <section id="video" class="py-12 md:py-16 scroll-mt-20">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8 text-center font-poetry">视频欣赏</h2>
+                <div class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg animate-slide-up">
+                    <video controls class="w-full h-full object-cover" poster="./2025-04-27-赠汪伦/赠汪伦-封面.jpg">
+                        <source src="./2025-04-27-赠汪伦/赠汪伦.mp4" type="video/mp4">
+                        您的浏览器不支持视频播放，请更新浏览器或使用其他浏览器。
+                    </video>
+                </div>
+                <p class="mt-4 text-gray-600 dark:text-gray-400 text-center">李白《赠汪伦》视频赏析</p>
+            </div>
+        </section>
+
+        <!-- 诗词原文 -->
+        <section id="poem" class="py-12 md:py-16 scroll-mt-20">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8 text-center font-poetry">诗词原文</h2>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md card-hover">
+                    <div class="poetry-text text-center text-2xl md:text-3xl mb-8 space-y-6">
+                        <h3 class="text-3xl md:text-4xl font-bold mb-6">赠汪伦</h3>
+                        <p class="mb-4">唐代 · 李白</p>
+                        <p>李白乘舟将欲行，</p>
+                        <p>忽闻岸上踏歌声。</p>
+                        <p>桃花潭水深千尺，</p>
+                        <p>不及汪伦送我情。</p>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="text-xl font-bold mb-4">注释</h4>
+                        <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+                            <li><span class="font-bold">踏歌：</span>边走边唱，是古代的一种歌舞形式。</li>
+                            <li><span class="font-bold">桃花潭：</span>在今安徽省宣城市宣州区，是李白曾经隐居的地方。</li>
+                            <li><span class="font-bold">汪伦：</span>李白的好友，曾在桃花潭附近盛情款待李白。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 赏析部分 -->
+        <section id="analysis" class="py-12 md:py-16 scroll-mt-20">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8 text-center font-poetry">诗词赏析</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="ml-3 text-xl font-bold">创作背景</h3>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            这首诗作于唐玄宗开元年间，李白离开桃花潭时所作。当时，李白在桃花潭隐居，与当地人汪伦结为好友。汪伦热情好客，对李白十分敬重。李白离开时，汪伦带领乡亲们来到岸边为李白送行，场面感人至深，李白深受感动，即兴写下此诗。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                                <i class="fas fa-paint-brush"></i>
+                            </div>
+                            <h3 class="ml-3 text-xl font-bold">艺术特色</h3>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            这首诗语言简洁明快，意境优美。诗人用"桃花潭水深千尺，不及汪伦送我情"的比喻，将深厚的友情与自然景观巧妙结合，既形象又富有哲理。全诗虽然只有短短四句，却将送别场景和诗人内心感受描绘得淋漓尽致，体现了李白诗歌的特点：自然流畅，意境高远。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover md:col-span-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                                <i class="fas fa-feather-alt"></i>
+                            </div>
+                            <h3 class="ml-3 text-xl font-bold">主题思想</h3>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            《赠汪伦》表达了诗人对友情的珍视和感激之情。诗中通过对比桃花潭水的深度与汪伦情谊的深厚，突出了人间真情的可贵。这首诗不仅是对汪伦个人的感谢，也体现了李白对民间友谊的重视。在李白漂泊的一生中，朋友之情是他精神上的重要支撑，这首诗正是这种情感的真实写照。
+                        </p>
+                        <p class="mt-4 text-gray-700 dark:text-gray-300">
+                            同时，诗中也流露出李白豪放不羁的性格特点。"李白乘舟将欲行"一句，展现了诗人行走天下的洒脱姿态；而对友情的深刻感受，则体现了他细腻的情感世界。这种豪放与细腻的结合，正是李白诗歌的魅力所在。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 相关诗词推荐 -->
+        <section class="py-12 md:py-16">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8 text-center font-poetry">相关诗词推荐</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                        <h3 class="text-xl font-bold mb-2">《送友人》</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-3">李白</p>
+                        <p class="text-gray-700 dark:text-gray-300 poetry-text">
+                            青山横北郭，白水绕东城。<br>
+                            此地一为别，孤蓬万里征。<br>
+                            浮云游子意，落日故人情。<br>
+                            挥手自兹去，萧萧班马鸣。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                        <h3 class="text-xl font-bold mb-2">《黄鹤楼送孟浩然之广陵》</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-3">李白</p>
+                        <p class="text-gray-700 dark:text-gray-300 poetry-text">
+                            故人西辞黄鹤楼，烟花三月下扬州。<br>
+                            孤帆远影碧空尽，唯见长江天际流。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md card-hover">
+                        <h3 class="text-xl font-bold mb-2">《送元二使安西》</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-3">王维</p>
+                        <p class="text-gray-700 dark:text-gray-300 poetry-text">
+                            渭城朝雨浥轻尘，客舍青青柳色新。<br>
+                            劝君更尽一杯酒，西出阳关无故人。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 作者信息 -->
+    <footer id="author" class="bg-gray-100 dark:bg-gray-800 py-12 scroll-mt-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="mb-6 md:mb-0">
+                        <h2 class="text-2xl font-bold mb-2">古诗文赏析</h2>
+                        <p class="text-gray-600 dark:text-gray-400">传承中华文化，品味诗词之美</p>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <a href="mailto:kong_026@163.com" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-envelope text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
+                            作者：<span class="font-medium">古诗文爱好者</span>
+                        </p>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            © 2025 古诗文赏析网站. 保留所有权利.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary-600 text-white shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary-700">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Preline UI JS -->
+    <script src="https://cdn.jsdelivr.net/npm/preline/dist/preline.min.js"></script>
+    
+    <!-- 自定义脚本 -->
+    <script>
+        // 深色模式切换
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // 检查系统偏好
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // 切换主题
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+        
+        // 移动端菜单
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // 返回顶部按钮
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 图片懒加载
+        document.addEventListener("DOMContentLoaded", function() {
+            const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+            
+            if ("IntersectionObserver" in window) {
+                let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            let lazyImage = entry.target;
+                            lazyImage.src = lazyImage.dataset.src;
+                            lazyImage.classList.remove("lazy");
+                            lazyImageObserver.unobserve(lazyImage);
+                        }
+                    });
+                });
+                
+                lazyImages.forEach(function(lazyImage) {
+                    lazyImageObserver.observe(lazyImage);
+                });
+            }
+        });
+        
+        // 视频元素淡入效果
+        const videoSection = document.getElementById('video');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        observer.observe(videoSection);
+    </script>
+</body>
+</html>
